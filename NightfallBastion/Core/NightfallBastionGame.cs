@@ -22,24 +22,22 @@ namespace NightfallBastion.Core
 
         protected override void Initialize()
         {
-            base.Initialize();
-
             InitializeGraphics();
             InitializeUI();
+
+            base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            base.LoadContent();
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _ui.LoadContent();
+
+            base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
@@ -47,17 +45,19 @@ namespace NightfallBastion.Core
             }
 
             _ui.Update(gameTime);
+
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
-
             GraphicsDevice.Clear(Color.DimGray);
 
             _spriteBatch.Begin();
             _ui.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
+
+            base.Draw(gameTime);
         }
 
         private void InitializeGraphics()
