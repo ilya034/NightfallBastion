@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GumProjectSave xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Screens>
+    <ScreenSave>
+      <Name>RootScreen</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">RootScreen</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">1280</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">720</Value>
+        </Variable>
+      </State>
+    </ScreenSave>
+    <ScreenSave>
+      <Name>MainMenuScreen</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">MainMenuScreen</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">1280</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">720</Value>
+        </Variable>
+      </State>
+    </ScreenSave>
+    <ScreenSave>
+      <Name>GameplayScreen</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">GameplayScreen</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">1280</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">720</Value>
+        </Variable>
+      </State>
+    </ScreenSave>
+  </Screens>
+  <Components>
+    <ComponentSave>
+      <Name>Button</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">Button</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">160</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">60</Value>
+        </Variable>
+      </State>
+    </ComponentSave>
+    <ComponentSave>
+      <Name>HealthBar</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">HealthBar</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">200</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">20</Value>
+        </Variable>
+      </State>
+    </ComponentSave>
+    <ComponentSave>
+      <Name>Label</Name>
+      <State>
+        <Name>Default</Name>
+        <Variable>
+          <Type>string</Type>
+          <Name>Name</Name>
+          <Value xsi:type="xsd:string">Label</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Width</Name>
+          <Value xsi:type="xsd:float">100</Value>
+        </Variable>
+        <Variable>
+          <Type>float</Type>
+          <Name>Height</Name>
+          <Value xsi:type="xsd:float">30</Value>
+        </Variable>
+      </State>
+    </ComponentSave>
+  </Components>
+</GumProjectSave> 
