@@ -12,7 +12,11 @@ namespace NightfallBastion.Core
 
         public NightfallBastionGame()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = 1280,
+                PreferredBackBufferHeight = 720,
+            };
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -23,35 +27,22 @@ namespace NightfallBastion.Core
             _gameView = new GameView(this);
             _gameState = new GameState();
 
-            InitializeGraphics();
-
             base.Initialize();
-        }
-        
-        private void InitializeGraphics()
-        {
-            _graphics.PreferredBackBufferWidth = 1280;
-            _graphics.PreferredBackBufferHeight = 720;
-            _graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
         {
             _gameView.LoadContent();
-
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-            {
                 Exit();
-            }
 
             _gameState.Update(gameTime);
             _gameView.Update(gameTime);
-
             base.Update(gameTime);
         }
 
@@ -60,7 +51,6 @@ namespace NightfallBastion.Core
             GraphicsDevice.Clear(Color.DimGray);
 
             _gameView.Draw(gameTime);
-
             base.Draw(gameTime);
         }
     }

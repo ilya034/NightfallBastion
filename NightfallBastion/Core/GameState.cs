@@ -6,12 +6,14 @@ namespace NightfallBastion.Core
     {
         public GameState()
         {
-            // Initialize game state
         }
 
         public void Update(GameTime gameTime)
         {
-            // Update game state
+        }
+
+        public void ChangeState()
+        {
         }
     }
 }

@@ -1,72 +1,61 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Myra;
-using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
-using Myra.Graphics2D.UI.Properties;
+using NightfallBastion.UI.Screens;
 
 namespace NightfallBastion.UI
 {
-    public class UIManager
+    public class UI
     {
         private readonly Desktop _desktop;
+        private readonly Game _game;
 
-        public UIManager(Game game)
+        public MainMenuScreen MainMenuScreen { get; private set; }
+        public GameplayScreen GameplayScreen { get; private set; }
+        public PauseScreen PauseScreen { get; private set; }
+        public OptionsScreen OptionsScreen { get; private set; }
+
+        public Screen CurrentScreen { get; private set; }
+
+        public static SpriteFont DefaultFont { get; private set; }
+
+        public UI(Game game)
         {
+            _game = game;
             MyraEnvironment.Game = game;
+
             _desktop = new Desktop();
         }
 
         public void LoadContent()
         {
-            var menuPanel = new VerticalStackPanel()
-            {
-                Spacing = 10,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center,
-            };
+            LoadFonts();
 
-            var titleLabel = new Label()
-            {
-                Text = "Nightfall Bastion",
-                TextColor = Color.Violet,
-                Padding = new Thickness(0, 5),
-                HorizontalAlignment = HorizontalAlignment.Center,
-            };
+            MainMenuScreen = new MainMenuScreen(this);
+            GameplayScreen = new GameplayScreen(this);
+            PauseScreen = new PauseScreen(this);
+            OptionsScreen = new OptionsScreen(this);
 
-            var buttonPlay = new Button()
-            {
-                Width = 200,
-                Padding = new Thickness(0, 5),
-                Content = new Label()
-                {
-                    Text = "Play",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                },
-            };
+            MainMenuScreen.Show();
+        }
 
-            var buttonExit = new Button()
-            {
-                Width = 200,
-                Padding = new Thickness(0, 5),
-                Content = new Label()
-                {
-                    Text = "Exit",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                },
-            };
+        public void LoadFonts()
+        {
+            //DefaultFont = _game.Content.Load<SpriteFont>("Fonts/DefaultFont");
+        }
 
-            menuPanel.Widgets.Add(titleLabel);
-            menuPanel.Widgets.Add(buttonPlay);
-            menuPanel.Widgets.Add(buttonExit);
-
-            _desktop.Root = menuPanel;
+        public void Show(Screen screen)
+        {
+            _desktop.Root = screen.RootElement;
+            CurrentScreen = screen;
         }
 
         public void Update(GameTime gameTime)
         {
+            CurrentScreen?.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
