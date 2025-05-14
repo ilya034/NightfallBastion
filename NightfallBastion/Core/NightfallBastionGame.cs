@@ -1,14 +1,18 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NightfallBastion.UI;
 
 namespace NightfallBastion.Core
 {
     public class NightfallBastionGame : Game
     {
         private readonly GraphicsDeviceManager _graphics;
-        private GameView _gameView;
-        private GameState _gameState;
+        private SpriteBatch _spriteBatch;
+        public SceneManager SceneManager { get; private set; }
+
+        // public GameWorld GameWorld { get; private set; }
 
         public NightfallBastionGame()
         {
@@ -24,15 +28,14 @@ namespace NightfallBastion.Core
 
         protected override void Initialize()
         {
-            _gameView = new GameView(this);
-            _gameState = new GameState();
-
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            SceneManager = new SceneManager(this);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            _gameView.LoadContent();
+            SceneManager.LoadContent();
             base.LoadContent();
         }
 
@@ -41,16 +44,14 @@ namespace NightfallBastion.Core
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
-            _gameState.Update(gameTime);
-            _gameView.Update(gameTime);
+            SceneManager.Update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
-
-            _gameView.Draw(gameTime);
+            SceneManager.Draw(_spriteBatch);
             base.Draw(gameTime);
         }
     }

@@ -1,27 +1,28 @@
+using System;
 using Microsoft.Xna.Framework;
 using Myra;
 using Myra.Graphics2D.UI;
 
-namespace NightfallBastion.UI.Screens
+namespace NightfallBastion.UI
 {
-    public class MainMenuScreen : Screen
+    public class MainMenuView : BaseView
     {
-        public MainMenuScreen(UI ui) : base(ui)
-        {
-        }
+        public event Action OnStartButtonClicked;
+        public event Action OnOptionsButtonClicked;
+        public event Action OnExitButtonClicked;
 
-        protected override void BuildUI()
+        public MainMenuView()
+            : base() { }
+
+        public override void BuildUI()
         {
-            var mainMenuPanel = new VerticalStackPanel
-            {
-                Spacing = 10
-            };
+            var mainMenuPanel = new VerticalStackPanel { Spacing = 10 };
 
             var titleLabel = new Label
             {
                 Text = "Nightfall Bastion",
                 TextColor = Color.Violet,
-                HorizontalAlignment = HorizontalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
             };
             mainMenuPanel.Widgets.Add(titleLabel);
 
@@ -35,10 +36,10 @@ namespace NightfallBastion.UI.Screens
                     Text = "Start Game",
                     TextColor = Color.White,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
+                    VerticalAlignment = VerticalAlignment.Center,
+                },
             };
-            startButton.Click += (sender, args) => UI.GameplayScreen.Show();
+            startButton.Click += (_, __) => OnStartButtonClicked?.Invoke();
             mainMenuPanel.Widgets.Add(startButton);
 
             var optionsButton = new Button
@@ -51,10 +52,10 @@ namespace NightfallBastion.UI.Screens
                     Text = "Options",
                     TextColor = Color.White,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
+                    VerticalAlignment = VerticalAlignment.Center,
+                },
             };
-            optionsButton.Click += (s, a) => UI.OptionsScreen.Show();
+            optionsButton.Click += (_, __) => OnOptionsButtonClicked?.Invoke();
             mainMenuPanel.Widgets.Add(optionsButton);
 
             var exitButton = new Button
@@ -67,10 +68,10 @@ namespace NightfallBastion.UI.Screens
                     Text = "Exit",
                     TextColor = Color.White,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                }
+                    VerticalAlignment = VerticalAlignment.Center,
+                },
             };
-            exitButton.Click += (s, a) => MyraEnvironment.Game.Exit();
+            exitButton.Click += (_, __) => OnExitButtonClicked?.Invoke();
             mainMenuPanel.Widgets.Add(exitButton);
 
             mainMenuPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -79,4 +80,4 @@ namespace NightfallBastion.UI.Screens
             RootElement.Widgets.Add(mainMenuPanel);
         }
     }
-} 
+}
