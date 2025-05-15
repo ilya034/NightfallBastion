@@ -4,7 +4,14 @@ namespace NightfallBastion.UI
 {
     public class MainMenuScene : BaseScene
     {
-        public MainMenuScene(NightfallBastionGame game, BasePresenter presenter, BaseView view)
+        public new MainMenuPresenter Presenter => (MainMenuPresenter)base.Presenter;
+        public new MainMenuView View => (MainMenuView)base.View;
+
+        public MainMenuScene(
+            NightfallBastionGame game,
+            MainMenuPresenter presenter,
+            MainMenuView view
+        )
             : base(game, presenter, view) { }
 
         public static MainMenuScene Create(NightfallBastionGame game)

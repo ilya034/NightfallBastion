@@ -12,6 +12,7 @@ namespace NightfallBastion.UI
     {
         public MainMenuScene MainMenuScene { get; private set; }
         public GameWorldScene GameWorldScene { get; private set; }
+        public OptionsScene OptionsScene { get; private set; }
 
         public NightfallBastionGame Game { get; }
         private readonly HashSet<BaseScene> _shownScenes;
@@ -30,6 +31,7 @@ namespace NightfallBastion.UI
         {
             MainMenuScene = MainMenuScene.Create(Game);
             GameWorldScene = GameWorldScene.Create(Game);
+            OptionsScene = OptionsScene.Create(Game);
 
             MainMenuScene.Show();
         }
@@ -53,6 +55,12 @@ namespace NightfallBastion.UI
         {
             _shownScenes.Last()?.Hide();
             ShowScene(scene);
+        }
+
+        public void HideCurrentScene()
+        {
+            if (_shownScenes.Count > 1)
+                _shownScenes.Last().Hide();
         }
     }
 }

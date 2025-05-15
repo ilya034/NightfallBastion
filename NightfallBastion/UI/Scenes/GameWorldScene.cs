@@ -4,7 +4,14 @@ namespace NightfallBastion.UI
 {
     public class GameWorldScene : BaseScene
     {
-        public GameWorldScene(NightfallBastionGame game, BasePresenter presenter, BaseView view)
+        public new GameWorldPresenter Presenter => (GameWorldPresenter)base.Presenter;
+        public new GameWorldView View => (GameWorldView)base.View;
+
+        public GameWorldScene(
+            NightfallBastionGame game,
+            GameWorldPresenter presenter,
+            GameWorldView view
+        )
             : base(game, presenter, view) { }
 
         public static GameWorldScene Create(NightfallBastionGame game)

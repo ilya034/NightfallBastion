@@ -4,7 +4,12 @@ namespace NightfallBastion.UI
 {
     public class GameWorldPresenter : BasePresenter
     {
-        public GameWorldPresenter(NightfallBastionGame game, BaseView view)
-            : base(game, view) { }
+        private readonly GameWorldView _view;
+
+        public GameWorldPresenter(NightfallBastionGame game, GameWorldView view)
+            : base(game)
+        {
+            _view = view;
+        }
     }
 }
