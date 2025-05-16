@@ -23,15 +23,15 @@ namespace NightfallBastion.UI
             Game = game;
             MyraEnvironment.Game = game;
 
-            _shownScenes = new HashSet<BaseScene>();
+            _shownScenes = [];
             _desktop = new Desktop();
         }
 
         public void LoadContent()
         {
-            MainMenuScene = MainMenuScene.Create(Game);
-            GameWorldScene = GameWorldScene.Create(Game);
-            OptionsScene = OptionsScene.Create(Game);
+            MainMenuScene = BaseScene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
+            GameWorldScene = BaseScene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
+            OptionsScene = BaseScene.Create<OptionsScene, OptionsPresenter, OptionsView>(Game);
 
             MainMenuScene.Show();
         }

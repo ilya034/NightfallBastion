@@ -13,12 +13,5 @@ namespace NightfallBastion.UI
             MainMenuView view
         )
             : base(game, presenter, view) { }
-
-        public static MainMenuScene Create(NightfallBastionGame game)
-        {
-            var view = new MainMenuView();
-            var presenter = new MainMenuPresenter(game, view);
-            return new MainMenuScene(game, presenter, view);
-        }
     }
 }

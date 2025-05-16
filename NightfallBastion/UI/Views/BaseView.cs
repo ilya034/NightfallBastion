@@ -4,12 +4,7 @@ namespace NightfallBastion.UI
 {
     public abstract class BaseView
     {
-        public Panel RootElement { get; }
-
-        public BaseView()
-        {
-            RootElement = new Panel();
-        }
+        public Panel RootElement { get; } = new Panel();
 
         public virtual void BuildUI() { }
     }

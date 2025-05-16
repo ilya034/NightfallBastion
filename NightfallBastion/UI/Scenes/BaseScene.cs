@@ -1,3 +1,4 @@
+using System;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -21,5 +22,17 @@ namespace NightfallBastion.UI
         public void Show() => Game.SceneManager.ShowScene(this);
 
         public void Hide() => Game.SceneManager.HideScene(this);
+
+        public static TScene Create<TScene, TPresenter, TView>(NightfallBastionGame game)
+            where TScene : BaseScene
+            where TPresenter : BasePresenter
+            where TView : BaseView, new()
+        {
+            var view = new TView();
+            var presenter = Activator.CreateInstance(typeof(TPresenter), game, view) as TPresenter;
+            var scene = Activator.CreateInstance(typeof(TScene), game, presenter, view) as TScene;
+
+            return scene;
+        }
     }
 }

@@ -9,12 +9,5 @@ namespace NightfallBastion.UI
 
         public OptionsScene(NightfallBastionGame game, OptionsPresenter presenter, OptionsView view)
             : base(game, presenter, view) { }
-
-        public static OptionsScene Create(NightfallBastionGame game)
-        {
-            var view = new OptionsView();
-            var presenter = new OptionsPresenter(game, view);
-            return new OptionsScene(game, presenter, view);
-        }
     }
 }

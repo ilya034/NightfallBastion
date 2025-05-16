@@ -7,9 +7,9 @@ namespace NightfallBastion.World
     public class GameWorld
     {
         private int _nextEntityId = 0;
-        private readonly List<Entity> _entities = new();
-        private readonly List<System> _systems = new();
-        private readonly Dictionary<Type, Dictionary<Entity, Component>> _components = new();
+        private readonly List<Entity> _entities = [];
+        private readonly List<System> _systems = [];
+        private readonly Dictionary<Type, Dictionary<Entity, Component>> _components = [];
 
         public void CreateEntity()
         {
@@ -41,11 +41,13 @@ namespace NightfallBastion.World
                 entityComponents.Remove(entity);
         }
 
-        public T GetComponent<T>(Entity entity)
+        public T? GetComponent<T>(Entity entity)
             where T : Component
         {
-            if (_components.TryGetValue(typeof(T), out var entityComponents) &&
-                entityComponents.TryGetValue(entity, out var component))
+            if (
+                _components.TryGetValue(typeof(T), out var entityComponents)
+                && entityComponents.TryGetValue(entity, out var component)
+            )
                 return (T)component;
 
             return null;
