@@ -31,6 +31,7 @@ namespace NightfallBastion.Core
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             SceneManager = new SceneManager(this);
+            GameWorld = new GameWorld(this);
             base.Initialize();
         }
 
@@ -51,12 +52,14 @@ namespace NightfallBastion.Core
                 SceneManager.HideCurrentScene();
 
             SceneManager.Update(gameTime);
+            GameWorld.Update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
+            // GameWorld.Draw(_spriteBatch);
             SceneManager.Draw(_spriteBatch);
             base.Draw(gameTime);
         }

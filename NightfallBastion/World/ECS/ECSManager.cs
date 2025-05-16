@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace NightfallBastion.World
 {
-    public class GameWorld
+    public class ECSManager
     {
         private int _nextEntityId = 0;
         private readonly List<Entity> _entities = [];
