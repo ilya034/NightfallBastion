@@ -10,6 +10,7 @@ namespace NightfallBastion.UI
             : base(game)
         {
             _view = view;
+            _view.SetGameWorld(game.GameWorld);
         }
     }
 }

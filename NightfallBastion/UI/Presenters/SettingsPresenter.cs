@@ -2,15 +2,10 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class OptionsPresenter : BasePresenter
+    public class SettingsPresenter(NightfallBastionGame game, SettingsView view)
+        : BasePresenter(game)
     {
-        private readonly OptionsView _view;
-
-        public OptionsPresenter(NightfallBastionGame game, OptionsView view)
-            : base(game)
-        {
-            _view = view;
-        }
+        private readonly SettingsView _view = view;
 
         public override void RegisterEvents()
         {

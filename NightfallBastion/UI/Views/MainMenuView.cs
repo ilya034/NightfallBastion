@@ -2,17 +2,15 @@ using System;
 using Microsoft.Xna.Framework;
 using Myra;
 using Myra.Graphics2D.UI;
+using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class MainMenuView : BaseView
+    public class MainMenuView(NightfallBastionGame game) : BaseView(game)
     {
         public event Action OnStartButtonClicked;
         public event Action OnOptionsButtonClicked;
         public event Action OnExitButtonClicked;
-
-        public MainMenuView()
-            : base() { }
 
         public override void BuildUI()
         {
@@ -20,7 +18,7 @@ namespace NightfallBastion.UI
 
             var titleLabel = new Label
             {
-                Text = "Nightfall Bastion",
+                Text = Game.Settings.GameTitle,
                 TextColor = Color.Violet,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
@@ -28,8 +26,8 @@ namespace NightfallBastion.UI
 
             var startButton = new Button
             {
-                Width = 200,
-                Height = 35,
+                Width = Game.Settings.DefaultButtonWidth,
+                Height = Game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -44,8 +42,8 @@ namespace NightfallBastion.UI
 
             var optionsButton = new Button
             {
-                Width = 200,
-                Height = 35,
+                Width = Game.Settings.DefaultButtonWidth,
+                Height = Game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -60,8 +58,8 @@ namespace NightfallBastion.UI
 
             var exitButton = new Button
             {
-                Width = 200,
-                Height = 35,
+                Width = Game.Settings.DefaultButtonWidth,
+                Height = Game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {

@@ -12,7 +12,7 @@ namespace NightfallBastion.UI
     {
         public MainMenuScene MainMenuScene { get; private set; }
         public GameWorldScene GameWorldScene { get; private set; }
-        public OptionsScene OptionsScene { get; private set; }
+        public SettingsScene OptionsScene { get; private set; }
 
         public NightfallBastionGame Game { get; }
         private readonly HashSet<BaseScene> _shownScenes;
@@ -31,7 +31,7 @@ namespace NightfallBastion.UI
         {
             MainMenuScene = BaseScene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
             GameWorldScene = BaseScene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
-            OptionsScene = BaseScene.Create<OptionsScene, OptionsPresenter, OptionsView>(Game);
+            OptionsScene = BaseScene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
 
             MainMenuScene.Show();
         }
@@ -40,8 +40,13 @@ namespace NightfallBastion.UI
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach (var scene in _shownScenes)
+            foreach (var scene in _shownScenes.ToArray())
             {
+                if (scene is GameWorldScene gameWorldScene)
+                {
+                    var view = gameWorldScene.View;
+                    view.DrawGameWorld(spriteBatch);
+                }
                 _desktop.Root = scene.View.RootElement;
                 _desktop.Render();
             }

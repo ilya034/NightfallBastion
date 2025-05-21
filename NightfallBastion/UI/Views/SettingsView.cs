@@ -1,13 +1,11 @@
 using System;
+using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class OptionsView : BaseView
+    public class SettingsView(NightfallBastionGame game) : BaseView(game)
     {
         public event Action OnBackButtonClicked;
-
-        public OptionsView()
-            : base() { }
 
         public override void BuildUI() { }
     }
