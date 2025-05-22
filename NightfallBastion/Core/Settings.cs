@@ -14,11 +14,9 @@ namespace NightfallBastion.Core
         public int DefaultButtonWidth = 200;
         public int DefaultButtonHeight = 35;
 
-        public string GameTitle = "Nightfall Bastion";
+        public int CameraSpeed = 400;
 
-        // public string StartGameButtonText = "Start Game";
-        // public string OptionsButtonText = "Options";
-        // public string ExitButtonText = "Exit";
+        public string GameTitle = "Nightfall Bastion";
 
         public string TilesetAssetName = "tileset";
         public string ContentRootDirectoryName = "Content";

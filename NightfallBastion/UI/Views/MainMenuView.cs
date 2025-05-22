@@ -18,7 +18,7 @@ namespace NightfallBastion.UI
 
             var titleLabel = new Label
             {
-                Text = Game.Settings.GameTitle,
+                Text = _game.Settings.GameTitle,
                 TextColor = Color.Violet,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
@@ -26,8 +26,8 @@ namespace NightfallBastion.UI
 
             var startButton = new Button
             {
-                Width = Game.Settings.DefaultButtonWidth,
-                Height = Game.Settings.DefaultButtonHeight,
+                Width = _game.Settings.DefaultButtonWidth,
+                Height = _game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -42,8 +42,8 @@ namespace NightfallBastion.UI
 
             var optionsButton = new Button
             {
-                Width = Game.Settings.DefaultButtonWidth,
-                Height = Game.Settings.DefaultButtonHeight,
+                Width = _game.Settings.DefaultButtonWidth,
+                Height = _game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -58,8 +58,8 @@ namespace NightfallBastion.UI
 
             var exitButton = new Button
             {
-                Width = Game.Settings.DefaultButtonWidth,
-                Height = Game.Settings.DefaultButtonHeight,
+                Width = _game.Settings.DefaultButtonWidth,
+                Height = _game.Settings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {

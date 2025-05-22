@@ -1,44 +1,52 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.World
 {
     public class GameWorld(NightfallBastionGame game)
     {
-        private readonly NightfallBastionGame _game = game;
-        private readonly ECSManager _ecsManager = new();
-        private TileMap? _tileMap;
-        private Texture2D? _tilesetTexture;
+        public NightfallBastionGame Game { get; } = game;
+        public ECSManager ECSManager { get; } = new();
+        public Entity CameraEntity { get; private set; }
+        public TileMap TileMap { get; private set; }
 
         public void LoadContent()
         {
-            _tilesetTexture = _game.Content.Load<Texture2D>(_game.Settings.TilesetAssetName);
-            _tileMap = new TileMap(
-                _game.Settings.DefaultMapWidth,
-                _game.Settings.DefaultMapHeight,
-                _game.Settings.DefaultTileSize
+            CreteCamera();
+
+            TileMap = new TileMap(
+                Game.Settings.DefaultMapWidth,
+                Game.Settings.DefaultMapHeight,
+                Game.Settings.DefaultTileSize
             );
-            for (int y = 0; y < _game.Settings.DefaultMapHeight; y++)
+
+            for (int y = 0; y < Game.Settings.DefaultMapHeight; y++)
             {
-                for (int x = 0; x < _game.Settings.DefaultMapWidth; x++)
+                for (int x = 0; x < Game.Settings.DefaultMapWidth; x++)
                 {
                     var tile = new Tile(
-                        _tilesetTexture,
                         new Rectangle(
-                            _game.Settings.DefaultTileTextureX,
-                            _game.Settings.DefaultTileTextureY,
-                            _game.Settings.DefaultTileSize,
-                            _game.Settings.DefaultTileSize
+                            Game.Settings.DefaultTileTextureX,
+                            Game.Settings.DefaultTileTextureY,
+                            Game.Settings.DefaultTileSize,
+                            Game.Settings.DefaultTileSize
                         )
                     );
-                    _tileMap.SetTile(x, y, tile);
+                    TileMap.SetTile(x, y, tile);
                 }
             }
         }
 
-        public void Update(GameTime gameTime) => _ecsManager.Update(gameTime);
+        private void CreteCamera()
+        {
+            CameraEntity = ECSManager.CreateEntity();
+            ECSManager.AddComponent(CameraEntity, new CameraComponent());
+            ECSManager.AddSystem(new CameraSystem(this));
+        }
 
-        public void Draw(SpriteBatch spriteBatch) => _tileMap?.Draw(spriteBatch);
+        public void Update(GameTime gameTime)
+        {
+            ECSManager.Update(gameTime);
+        }
     }
 }

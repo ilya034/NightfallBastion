@@ -5,8 +5,10 @@ namespace NightfallBastion.UI
 {
     public abstract class BaseView(NightfallBastionGame game)
     {
-        public NightfallBastionGame Game { get; } = game;
+        protected readonly NightfallBastionGame _game = game;
         public Panel RootElement { get; } = new Panel();
+
+        public virtual void LoadContent() { }
 
         public virtual void BuildUI() { }
     }

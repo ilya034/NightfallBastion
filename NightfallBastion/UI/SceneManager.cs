@@ -38,14 +38,14 @@ namespace NightfallBastion.UI
 
         public void Update(GameTime gameTime) { }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw()
         {
             foreach (var scene in _shownScenes.ToArray())
             {
                 if (scene is GameWorldScene gameWorldScene)
                 {
                     var view = gameWorldScene.View;
-                    view.DrawGameWorld(spriteBatch);
+                    view.Draw();
                 }
                 _desktop.Root = scene.View.RootElement;
                 _desktop.Render();

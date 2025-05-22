@@ -15,6 +15,7 @@ namespace NightfallBastion.UI
             Presenter = presenter;
             View = view;
 
+            View.LoadContent();
             View.BuildUI();
             Presenter.RegisterEvents();
         }

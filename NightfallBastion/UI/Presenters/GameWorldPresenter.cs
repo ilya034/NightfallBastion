@@ -2,15 +2,9 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class GameWorldPresenter : BasePresenter
+    public class GameWorldPresenter(NightfallBastionGame game, GameWorldView view)
+        : BasePresenter(game)
     {
-        private readonly GameWorldView _view;
-
-        public GameWorldPresenter(NightfallBastionGame game, GameWorldView view)
-            : base(game)
-        {
-            _view = view;
-            _view.SetGameWorld(game.GameWorld);
-        }
+        private readonly GameWorldView _view = view;
     }
 }

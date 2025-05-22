@@ -11,10 +11,11 @@ namespace NightfallBastion.World
         private readonly List<System> _systems = [];
         private readonly Dictionary<Type, Dictionary<Entity, Component>> _components = [];
 
-        public void CreateEntity()
+        public Entity CreateEntity()
         {
             var entity = new Entity(_nextEntityId++);
             _entities.Add(entity);
+            return entity;
         }
 
         public void DestroyEntity(Entity entity)
@@ -52,6 +53,10 @@ namespace NightfallBastion.World
 
             return null;
         }
+
+        public void AddSystem(System system) => _systems.Add(system);
+
+        public void RemoveSystem(System system) => _systems.Remove(system);
 
         public void Update(GameTime gameTime)
         {

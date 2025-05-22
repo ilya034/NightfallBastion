@@ -3,15 +3,10 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class MainMenuPresenter : BasePresenter
+    public class MainMenuPresenter(NightfallBastionGame game, MainMenuView view)
+        : BasePresenter(game)
     {
-        private readonly MainMenuView _view;
-
-        public MainMenuPresenter(NightfallBastionGame game, MainMenuView view)
-            : base(game)
-        {
-            _view = view;
-        }
+        private readonly MainMenuView _view = view;
 
         public override void RegisterEvents()
         {

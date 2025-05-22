@@ -9,8 +9,8 @@ namespace NightfallBastion.Core
     public class NightfallBastionGame : Game
     {
         private readonly GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
 
+        public SpriteBatch SpriteBatch { get; private set; }
         public Settings Settings { get; private set; }
         public KeyboardState CurrentKeyboardState { get; private set; }
         public SceneManager SceneManager { get; private set; }
@@ -32,7 +32,7 @@ namespace NightfallBastion.Core
 
         protected override void Initialize()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
             SceneManager = new SceneManager(this);
             GameWorld = new GameWorld(this);
             base.Initialize();
@@ -62,11 +62,11 @@ namespace NightfallBastion.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
+            SpriteBatch.Begin();
             GraphicsDevice.Clear(Color.DimGray);
-            SceneManager.Draw(_spriteBatch);
+            SceneManager.Draw();
             base.Draw(gameTime);
-            _spriteBatch.End();
+            SpriteBatch.End();
         }
     }
 }
