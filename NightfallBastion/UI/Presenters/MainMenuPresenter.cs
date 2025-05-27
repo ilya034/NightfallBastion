@@ -18,10 +18,10 @@ namespace NightfallBastion.UI
         }
 
         public void OnPlayButtonClicked() =>
-            _game.SceneManager.ChangeScene(_game.SceneManager.GameWorldScene);
+            _game.SceneManager.ShowScene(Scenes.GameWorld);
 
         public void OnOptionsButtonClicked() =>
-            _game.SceneManager.ChangeScene(_game.SceneManager.OptionsScene);
+            _game.SceneManager.ChangeScene(Scenes.Settings);
 
         public void OnExitButtonClicked() => _game.Exit();
     }

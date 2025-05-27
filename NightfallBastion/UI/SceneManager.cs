@@ -1,21 +1,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Myra;
 using Myra.Graphics2D.UI;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
+    public enum Scenes
+    {
+        MainMenu,
+        GameWorld,
+        Settings
+    }
+
     public class SceneManager
     {
-        public MainMenuScene MainMenuScene { get; private set; }
-        public GameWorldScene GameWorldScene { get; private set; }
-        public SettingsScene OptionsScene { get; private set; }
-
         public NightfallBastionGame Game { get; }
-        private readonly HashSet<BaseScene> _shownScenes;
+        private readonly Dictionary<Scenes, BaseScene> _scenes;
+        private readonly Stack<BaseScene> _shownScenes;
         private readonly Desktop _desktop;
 
         public SceneManager(NightfallBastionGame game)
@@ -23,49 +26,62 @@ namespace NightfallBastion.UI
             Game = game;
             MyraEnvironment.Game = game;
 
-            _shownScenes = [];
+            _scenes = new Dictionary<Scenes, BaseScene>();
+            _shownScenes = new Stack<BaseScene>();
             _desktop = new Desktop();
         }
 
         public void LoadContent()
         {
-            MainMenuScene = BaseScene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
-            GameWorldScene = BaseScene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
-            OptionsScene = BaseScene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
-
-            MainMenuScene.Show();
+            _scenes[Scenes.MainMenu] = BaseScene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
+            _scenes[Scenes.GameWorld] = BaseScene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
+            _scenes[Scenes.Settings] = BaseScene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
+            ShowScene(Scenes.MainMenu);
         }
 
-        public void Update(GameTime gameTime) { }
-
-        public void Draw()
+        public void ShowScene(Scenes key)
         {
-            foreach (var scene in _shownScenes.ToArray())
-            {
-                if (scene is GameWorldScene gameWorldScene)
-                {
-                    var view = gameWorldScene.View;
-                    view.Draw();
-                }
-                _desktop.Root = scene.View.RootElement;
-                _desktop.Render();
-            }
+            var scene = _scenes[key];
+            if (!_shownScenes.Contains(scene))
+                _shownScenes.Push(scene);
         }
 
-        public void ShowScene(BaseScene scene) => _shownScenes.Add(scene);
-
-        public void HideScene(BaseScene scene) => _shownScenes.Remove(scene);
-
-        public void ChangeScene(BaseScene scene)
+        public void HideScene(Scenes key)
         {
-            _shownScenes.Last()?.Hide();
-            ShowScene(scene);
+            var scene = _scenes[key];
+            if (_shownScenes.Count > 0 && _shownScenes.Peek() == scene)
+                _shownScenes.Pop();
+        }
+
+        public void ChangeScene(Scenes key)
+        {
+            if (_shownScenes.Count > 0)
+                _shownScenes.Pop();
+            ShowScene(key);
         }
 
         public void HideCurrentScene()
         {
             if (_shownScenes.Count > 1)
-                _shownScenes.Last().Hide();
+                _shownScenes.Pop();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (_shownScenes.Count > 0)
+                _shownScenes.Peek().Update(gameTime);
+        }
+
+        public void Draw()
+        {
+            foreach (var scene in _shownScenes.Reverse())
+            {
+                if (scene is GameWorldScene gameWorldScene)
+                    gameWorldScene.View.Draw();
+
+                _desktop.Root = scene.View.RootElement;
+                _desktop.Render();
+            }
         }
     }
 }

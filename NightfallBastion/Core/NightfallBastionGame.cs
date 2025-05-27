@@ -9,30 +9,31 @@ namespace NightfallBastion.Core
     public class NightfallBastionGame : Game
     {
         private readonly GraphicsDeviceManager _graphics;
-
         public SpriteBatch SpriteBatch { get; private set; }
-        public Settings Settings { get; private set; }
-        public KeyboardState CurrentKeyboardState { get; private set; }
+        public CoreSettings CoreSettings { get; private set; }
+        public GameplaySettings GameplaySettings { get; private set; }
         public SceneManager SceneManager { get; private set; }
         public GameWorld GameWorld { get; private set; }
+        public KeyboardState CurrentKeyboardState { get; private set; }
 
         public NightfallBastionGame()
         {
-            Settings = new Settings();
+            CoreSettings = new CoreSettings();
 
             _graphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = Settings.DefaultScreenWidth,
-                PreferredBackBufferHeight = Settings.DefaultScreenHeight,
+                PreferredBackBufferWidth = CoreSettings.DefaultScreenWidth,
+                PreferredBackBufferHeight = CoreSettings.DefaultScreenHeight,
             };
-
-            Content.RootDirectory = Settings.ContentRootDirectoryName;
+            
+            Content.RootDirectory = CoreSettings.ContentRootDirectoryName;
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
+            GameplaySettings = new GameplaySettings();
             SceneManager = new SceneManager(this);
             GameWorld = new GameWorld(this);
             base.Initialize();
@@ -62,11 +63,9 @@ namespace NightfallBastion.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            SpriteBatch.Begin();
             GraphicsDevice.Clear(Color.DimGray);
             SceneManager.Draw();
             base.Draw(gameTime);
-            SpriteBatch.End();
         }
     }
 }

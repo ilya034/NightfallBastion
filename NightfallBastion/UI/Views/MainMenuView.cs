@@ -8,9 +8,9 @@ namespace NightfallBastion.UI
 {
     public class MainMenuView(NightfallBastionGame game) : BaseView(game)
     {
-        public event Action OnStartButtonClicked;
-        public event Action OnOptionsButtonClicked;
-        public event Action OnExitButtonClicked;
+        public event Action? OnStartButtonClicked;
+        public event Action? OnOptionsButtonClicked;
+        public event Action? OnExitButtonClicked;
 
         public override void BuildUI()
         {
@@ -18,7 +18,7 @@ namespace NightfallBastion.UI
 
             var titleLabel = new Label
             {
-                Text = _game.Settings.GameTitle,
+                Text = _game.CoreSettings.GameTitle,
                 TextColor = Color.Violet,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
@@ -26,8 +26,8 @@ namespace NightfallBastion.UI
 
             var startButton = new Button
             {
-                Width = _game.Settings.DefaultButtonWidth,
-                Height = _game.Settings.DefaultButtonHeight,
+                Width = _game.CoreSettings.DefaultButtonWidth,
+                Height = _game.CoreSettings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -42,8 +42,8 @@ namespace NightfallBastion.UI
 
             var optionsButton = new Button
             {
-                Width = _game.Settings.DefaultButtonWidth,
-                Height = _game.Settings.DefaultButtonHeight,
+                Width = _game.CoreSettings.DefaultButtonWidth,
+                Height = _game.CoreSettings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
@@ -58,8 +58,8 @@ namespace NightfallBastion.UI
 
             var exitButton = new Button
             {
-                Width = _game.Settings.DefaultButtonWidth,
-                Height = _game.Settings.DefaultButtonHeight,
+                Width = _game.CoreSettings.DefaultButtonWidth,
+                Height = _game.CoreSettings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {

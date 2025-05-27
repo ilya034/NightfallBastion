@@ -5,39 +5,92 @@ namespace NightfallBastion.World
 {
     public class GameWorld(NightfallBastionGame game)
     {
-        public NightfallBastionGame Game { get; } = game;
-        public ECSManager ECSManager { get; } = new();
-        public Entity CameraEntity { get; private set; }
-        public TileMap TileMap { get; private set; }
+        public NightfallBastionGame Game { get; private set; } = game;
+        public ECSManager ECSManager { get; private set; } = new();
+        public Entity? CameraEntity { get; private set; }
+        public TileMap? TileMap { get; private set; }
 
         public void LoadContent()
         {
-            CreteCamera();
+            CreateCamera();
 
             TileMap = new TileMap(
-                Game.Settings.DefaultMapWidth,
-                Game.Settings.DefaultMapHeight,
-                Game.Settings.DefaultTileSize
+                Game.CoreSettings.DefaultMapWidth,
+                Game.CoreSettings.DefaultMapHeight,
+                Game.CoreSettings.DefaultTileSize
             );
 
-            for (int y = 0; y < Game.Settings.DefaultMapHeight; y++)
+            for (int y = 0; y < Game.CoreSettings.DefaultMapHeight; y++)
             {
-                for (int x = 0; x < Game.Settings.DefaultMapWidth; x++)
+                for (int x = 0; x < Game.CoreSettings.DefaultMapWidth; x++)
                 {
-                    var tile = new Tile(
-                        new Rectangle(
-                            Game.Settings.DefaultTileTextureX,
-                            Game.Settings.DefaultTileTextureY,
-                            Game.Settings.DefaultTileSize,
-                            Game.Settings.DefaultTileSize
-                        )
-                    );
+                    Tile tile;
+                    if (
+                        x == 0
+                        || y == 0
+                        || x == Game.CoreSettings.DefaultMapWidth - 1
+                        || y == Game.CoreSettings.DefaultMapHeight - 1
+                    )
+                    {
+                        tile = new Tile(
+                            new Rectangle(
+                                Game.CoreSettings.DefaultTileTextureX + Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileTextureY,
+                                Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileSize
+                            ),
+                            true,
+                            TileType.Wall
+                        );
+                    }
+                    else if (x == 2 && y == 2)
+                    {
+                        tile = new Tile(
+                            new Rectangle(
+                                Game.CoreSettings.DefaultTileTextureX + 2 * Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileTextureY,
+                                Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileSize
+                            ),
+                            false,
+                            TileType.EnemySpawn
+                        );
+                    }
+                    else if (
+                        x == Game.CoreSettings.DefaultMapWidth / 2
+                        && y == Game.CoreSettings.DefaultMapHeight / 2
+                    )
+                    {
+                        tile = new Tile(
+                            new Rectangle(
+                                Game.CoreSettings.DefaultTileTextureX + 3 * Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileTextureY,
+                                Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileSize
+                            ),
+                            false,
+                            TileType.PlayerCore
+                        );
+                    }
+                    else
+                    {
+                        tile = new Tile(
+                            new Rectangle(
+                                Game.CoreSettings.DefaultTileTextureX,
+                                Game.CoreSettings.DefaultTileTextureY,
+                                Game.CoreSettings.DefaultTileSize,
+                                Game.CoreSettings.DefaultTileSize
+                            ),
+                            false,
+                            TileType.Empty
+                        );
+                    }
                     TileMap.SetTile(x, y, tile);
                 }
             }
         }
 
-        private void CreteCamera()
+        private void CreateCamera()
         {
             CameraEntity = ECSManager.CreateEntity();
             ECSManager.AddComponent(CameraEntity, new CameraComponent());

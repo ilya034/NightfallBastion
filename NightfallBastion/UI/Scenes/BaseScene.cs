@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -20,9 +21,7 @@ namespace NightfallBastion.UI
             Presenter.RegisterEvents();
         }
 
-        public void Show() => Game.SceneManager.ShowScene(this);
-
-        public void Hide() => Game.SceneManager.HideScene(this);
+        public virtual void Update(GameTime gameTime) { }
 
         public static TScene Create<TScene, TPresenter, TView>(NightfallBastionGame game)
             where TScene : BaseScene
