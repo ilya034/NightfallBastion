@@ -3,7 +3,7 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class SettingsView(NightfallBastionGame game) : BaseView(game)
+    public class SettingsView(NightfallBastionGame game) : View(game)
     {
         public event Action OnBackButtonClicked;
 

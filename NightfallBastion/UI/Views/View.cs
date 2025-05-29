@@ -3,7 +3,7 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public abstract class BaseView(NightfallBastionGame game)
+    public abstract class View(NightfallBastionGame game)
     {
         protected readonly NightfallBastionGame _game = game;
         public Panel RootElement { get; } = new Panel();

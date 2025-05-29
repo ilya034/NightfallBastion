@@ -6,7 +6,7 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public class MainMenuView(NightfallBastionGame game) : BaseView(game)
+    public class MainMenuView(NightfallBastionGame game) : View(game)
     {
         public event Action? OnStartButtonClicked;
         public event Action? OnOptionsButtonClicked;

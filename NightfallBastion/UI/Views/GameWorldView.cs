@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NightfallBastion.Core;
@@ -5,40 +6,20 @@ using NightfallBastion.World;
 
 namespace NightfallBastion.UI
 {
-    public class GameWorldView(NightfallBastionGame game) : BaseView(game)
+    public class GameWorldView(NightfallBastionGame game) : View(game)
     {
         private Texture2D? _tilesetTexture;
+        private SpriteFont? _font;
 
         public void Draw()
         {
-            var camera = _game.GameWorld.ECSManager.GetComponent<CameraComponent>(_game.GameWorld.CameraEntity);
-            if (camera == null)
-                return;
-
-            var transform = GetCameraTransform(camera);
+            var transform = _game.GameWorld.GetCameraTransformMatrix();
 
             _game.SpriteBatch.Begin(transformMatrix: transform);
             DrawTileMap();
             _game.SpriteBatch.End();
         }
 
-        private Matrix GetCameraTransform(CameraComponent camera)
-        {
-            var position = camera.Position;
-            var scale = camera.Zoom;
-            var rotation = camera.Rotation;
-
-            return Matrix.CreateTranslation(new Vector3(-position, 0))
-                * Matrix.CreateRotationZ(rotation)
-                * Matrix.CreateScale(new Vector3(scale, scale, 1))
-                * Matrix.CreateTranslation(
-                    new Vector3(
-                        _game.GraphicsDevice.Viewport.Width / 2f,
-                        _game.GraphicsDevice.Viewport.Height / 2f,
-                        0
-                    )
-                );
-        }
 
         private void DrawTileMap()
         {
@@ -58,12 +39,26 @@ namespace NightfallBastion.UI
                     if (tile == null)
                         continue;
 
+                    Color tileColor = tile.GetRenderColor();
+
                     _game.SpriteBatch.Draw(
                         _tilesetTexture,
                         new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize),
                         tile.SourceRect,
-                        Color.White
+                        tileColor
                     );
+
+                    if (tile.MaxHealth > 0 && _font != null)
+                    {
+                        string healthText = $"{tile.CurrentHealth}";
+                        Vector2 textSize = _font.MeasureString(healthText);
+                        Vector2 textPosition = new Vector2(
+                            x * tileSize + (tileSize - textSize.X) / 2,
+                            y * tileSize + (tileSize - textSize.Y) / 2
+                        );
+
+                        _game.SpriteBatch.DrawString(_font, healthText, textPosition, Color.Black);
+                    }
                 }
             }
         }
@@ -71,6 +66,7 @@ namespace NightfallBastion.UI
         public override void LoadContent()
         {
             _tilesetTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.TilesetAssetName);
+            _font = _game.Content.Load<SpriteFont>("Font");
         }
     }
 }

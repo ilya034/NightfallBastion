@@ -7,14 +7,8 @@ namespace NightfallBastion.World
         public int TileSize { get; } = tileSize;
         private readonly Tile[,] _tiles = new Tile[width, height];
 
-        public void SetTile(int x, int y, Tile tile)
-        {
-            _tiles[x, y] = tile;
-        }
+        public void SetTile(int x, int y, Tile tile) => _tiles[x, y] = tile;
 
-        public Tile GetTile(int x, int y)
-        {
-            return _tiles[x, y];
-        }
+        public Tile GetTile(int x, int y) => _tiles[x, y];
     }
 }

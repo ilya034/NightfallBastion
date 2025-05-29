@@ -2,7 +2,7 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public abstract class BasePresenter(NightfallBastionGame game)
+    public abstract class Presenter(NightfallBastionGame game)
     {
         protected readonly NightfallBastionGame _game = game;
 

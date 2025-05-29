@@ -25,7 +25,7 @@ namespace NightfallBastion.Core
                 PreferredBackBufferWidth = CoreSettings.DefaultScreenWidth,
                 PreferredBackBufferHeight = CoreSettings.DefaultScreenHeight,
             };
-            
+
             Content.RootDirectory = CoreSettings.ContentRootDirectoryName;
             IsMouseVisible = true;
         }

@@ -17,8 +17,8 @@ namespace NightfallBastion.UI
     public class SceneManager
     {
         public NightfallBastionGame Game { get; }
-        private readonly Dictionary<Scenes, BaseScene> _scenes;
-        private readonly Stack<BaseScene> _shownScenes;
+        private readonly Dictionary<Scenes, Scene> _scenes;
+        private readonly Stack<Scene> _shownScenes;
         private readonly Desktop _desktop;
 
         public SceneManager(NightfallBastionGame game)
@@ -26,16 +26,16 @@ namespace NightfallBastion.UI
             Game = game;
             MyraEnvironment.Game = game;
 
-            _scenes = new Dictionary<Scenes, BaseScene>();
-            _shownScenes = new Stack<BaseScene>();
+            _scenes = new Dictionary<Scenes, Scene>();
+            _shownScenes = new Stack<Scene>();
             _desktop = new Desktop();
         }
 
         public void LoadContent()
         {
-            _scenes[Scenes.MainMenu] = BaseScene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
-            _scenes[Scenes.GameWorld] = BaseScene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
-            _scenes[Scenes.Settings] = BaseScene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
+            _scenes[Scenes.MainMenu] = Scene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
+            _scenes[Scenes.GameWorld] = Scene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
+            _scenes[Scenes.Settings] = Scene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
             ShowScene(Scenes.MainMenu);
         }
 

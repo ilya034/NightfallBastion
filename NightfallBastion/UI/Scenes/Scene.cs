@@ -4,13 +4,13 @@ using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
 {
-    public abstract class BaseScene
+    public abstract class Scene
     {
         public NightfallBastionGame Game { get; }
-        public BasePresenter Presenter { get; }
-        public BaseView View { get; }
+        public Presenter Presenter { get; }
+        public View View { get; }
 
-        public BaseScene(NightfallBastionGame game, BasePresenter presenter, BaseView view)
+        public Scene(NightfallBastionGame game, Presenter presenter, View view)
         {
             Game = game;
             Presenter = presenter;
@@ -24,9 +24,9 @@ namespace NightfallBastion.UI
         public virtual void Update(GameTime gameTime) { }
 
         public static TScene Create<TScene, TPresenter, TView>(NightfallBastionGame game)
-            where TScene : BaseScene
-            where TPresenter : BasePresenter
-            where TView : BaseView
+            where TScene : Scene
+            where TPresenter : Presenter
+            where TView : View
         {
             var view = Activator.CreateInstance(typeof(TView), game) as TView;
             var presenter = Activator.CreateInstance(typeof(TPresenter), game, view) as TPresenter;

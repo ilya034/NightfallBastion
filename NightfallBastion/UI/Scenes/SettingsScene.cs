@@ -6,7 +6,7 @@ namespace NightfallBastion.UI
         NightfallBastionGame game,
         SettingsPresenter presenter,
         SettingsView view
-    ) : BaseScene(game, presenter, view)
+    ) : Scene(game, presenter, view)
     {
         public new SettingsPresenter Presenter => (SettingsPresenter)base.Presenter;
         public new SettingsView View => (SettingsView)base.View;

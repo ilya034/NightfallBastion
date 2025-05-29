@@ -1,5 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
+using NightfallBastion.World.Buildings;
 
 namespace NightfallBastion.World
 {
@@ -7,12 +10,14 @@ namespace NightfallBastion.World
     {
         public NightfallBastionGame Game { get; private set; } = game;
         public ECSManager ECSManager { get; private set; } = new();
-        public Entity? CameraEntity { get; private set; }
         public TileMap? TileMap { get; private set; }
+        public Camera Camera { get; private set; }
 
         public void LoadContent()
         {
             CreateCamera();
+
+            ECSManager.AddSystem(new DamageSystem(this));
 
             TileMap = new TileMap(
                 Game.CoreSettings.DefaultMapWidth,
@@ -32,59 +37,22 @@ namespace NightfallBastion.World
                         || y == Game.CoreSettings.DefaultMapHeight - 1
                     )
                     {
-                        tile = new Tile(
-                            new Rectangle(
-                                Game.CoreSettings.DefaultTileTextureX + Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileTextureY,
-                                Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileSize
-                            ),
-                            true,
-                            TileType.Wall
-                        );
+                        tile = new Tile(BuildingFactory.CreateStrongWall(Game));
                     }
+                    else if ((x == 5 && y >= 5 && y <= 10) || (x == 15 && y >= 5 && y <= 10))
+                        tile = new Tile(BuildingFactory.CreateMediumWall(Game));
+                    else if ((x >= 8 && x <= 12 && y == 8) || (x >= 8 && x <= 12 && y == 12))
+                        tile = new Tile(BuildingFactory.CreateWeakWall(Game));
                     else if (x == 2 && y == 2)
-                    {
-                        tile = new Tile(
-                            new Rectangle(
-                                Game.CoreSettings.DefaultTileTextureX + 2 * Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileTextureY,
-                                Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileSize
-                            ),
-                            false,
-                            TileType.EnemySpawn
-                        );
-                    }
+                        tile = new Tile(BuildingFactory.CreateEnemySpawn(Game));
                     else if (
                         x == Game.CoreSettings.DefaultMapWidth / 2
                         && y == Game.CoreSettings.DefaultMapHeight / 2
                     )
-                    {
-                        tile = new Tile(
-                            new Rectangle(
-                                Game.CoreSettings.DefaultTileTextureX + 3 * Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileTextureY,
-                                Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileSize
-                            ),
-                            false,
-                            TileType.PlayerCore
-                        );
-                    }
+                        tile = new Tile(BuildingFactory.CreatePlayerCore(Game));
                     else
-                    {
-                        tile = new Tile(
-                            new Rectangle(
-                                Game.CoreSettings.DefaultTileTextureX,
-                                Game.CoreSettings.DefaultTileTextureY,
-                                Game.CoreSettings.DefaultTileSize,
-                                Game.CoreSettings.DefaultTileSize
-                            ),
-                            false,
-                            TileType.Empty
-                        );
-                    }
+                        tile = new Tile(BuildingFactory.CreateEmptySpace(Game));
+
                     TileMap.SetTile(x, y, tile);
                 }
             }
@@ -92,13 +60,57 @@ namespace NightfallBastion.World
 
         private void CreateCamera()
         {
-            CameraEntity = ECSManager.CreateEntity();
-            ECSManager.AddComponent(CameraEntity, new CameraComponent());
-            ECSManager.AddSystem(new CameraSystem(this));
+            var viewport = Game.GraphicsDevice.Viewport;
+            Console.WriteLine($"Camera Viewport size: {viewport.Width}x{viewport.Height}");
+
+            Camera = new Camera(viewport.Width, viewport.Height)
+            {
+                Position = Vector2.Zero,
+                Zoom = 1.0f,
+                Rotation = 0.0f,
+            };
+        }
+
+        public void UpdateCameraViewport()
+        {
+            var viewport = Game.GraphicsDevice.Viewport;
+            Camera.ViewportWidth = viewport.Width;
+            Camera.ViewportHeight = viewport.Height;
+        }
+
+        public Vector2 ScreenToWorld(Vector2 screenPosition) =>
+            Camera.ScreenToWorld(screenPosition);
+
+        public Vector2 WorldToScreen(Vector2 worldPosition) => Camera.WorldToScreen(worldPosition);
+
+        public Matrix GetCameraTransformMatrix() => Camera.GetTransformMatrix();
+
+        public bool IsInCameraView(Vector2 worldPosition) => Camera.IsInView(worldPosition);
+
+        private void UpdateCamera(GameTime gameTime)
+        {
+            var keyboard = Game.CurrentKeyboardState;
+            float speed =
+                Game.GameplaySettings.CameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            var pos = Camera.Position;
+            if (keyboard.IsKeyDown(Keys.W) || keyboard.IsKeyDown(Keys.Up))
+                pos.Y -= speed;
+            if (keyboard.IsKeyDown(Keys.S) || keyboard.IsKeyDown(Keys.Down))
+                pos.Y += speed;
+            if (keyboard.IsKeyDown(Keys.A) || keyboard.IsKeyDown(Keys.Left))
+                pos.X -= speed;
+            if (keyboard.IsKeyDown(Keys.D) || keyboard.IsKeyDown(Keys.Right))
+                pos.X += speed;
+            Camera.Position = pos;
+            if (keyboard.IsKeyDown(Keys.OemPlus) || keyboard.IsKeyDown(Keys.E))
+                Camera.Zoom += 0.01f;
+            if (keyboard.IsKeyDown(Keys.OemMinus) || keyboard.IsKeyDown(Keys.Q))
+                Camera.Zoom = Math.Max(0.1f, Camera.Zoom - 0.01f);
         }
 
         public void Update(GameTime gameTime)
         {
+            UpdateCamera(gameTime);
             ECSManager.Update(gameTime);
         }
     }
