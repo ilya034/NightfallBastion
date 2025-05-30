@@ -57,7 +57,6 @@ namespace NightfallBastion.Core
                 SceneManager.HideCurrentScene();
 
             SceneManager.Update(gameTime);
-            GameWorld.Update(gameTime);
             base.Update(gameTime);
         }
 

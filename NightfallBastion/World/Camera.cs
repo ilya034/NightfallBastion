@@ -44,7 +44,7 @@ namespace NightfallBastion.World
 
             float cos = (float)Math.Cos(-Rotation);
             float sin = (float)Math.Sin(-Rotation);
-            Vector2 rotatedPosition = new Vector2(
+            Vector2 rotatedPosition = new(
                 scaledPosition.X * cos - scaledPosition.Y * sin,
                 scaledPosition.X * sin + scaledPosition.Y * cos
             );
@@ -58,7 +58,7 @@ namespace NightfallBastion.World
 
             float cos = (float)Math.Cos(Rotation);
             float sin = (float)Math.Sin(Rotation);
-            Vector2 rotatedPosition = new Vector2(
+            Vector2 rotatedPosition = new(
                 relativePosition.X * cos - relativePosition.Y * sin,
                 relativePosition.X * sin + relativePosition.Y * cos
             );
@@ -133,21 +133,6 @@ namespace NightfallBastion.World
                 throw new ArgumentException();
 
             Zoom = MathHelper.Clamp(zoom, minZoom, maxZoom);
-        }
-
-        public void Rotate(float deltaRotation)
-        {
-            Rotation += deltaRotation;
-            Rotation = Rotation % (2 * MathHelper.Pi);
-            if (Rotation < 0)
-                Rotation += 2 * MathHelper.Pi;
-        }
-
-        public void SetRotation(float rotation)
-        {
-            Rotation = rotation % (2 * MathHelper.Pi);
-            if (Rotation < 0)
-                Rotation += 2 * MathHelper.Pi;
         }
     }
 

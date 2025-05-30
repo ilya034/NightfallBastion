@@ -27,19 +27,10 @@ namespace NightfallBastion.World
             Building = null;
         }
 
-        public bool TakeDamage(int damage)
-        {
-            return Building?.TakeDamage(damage) ?? false;
-        }
+        public bool TakeDamage(int damage) => Building?.TakeDamage(damage) ?? false;
 
-        public bool Repair(int amount)
-        {
-            return Building?.Repair(amount) ?? false;
-        }
+        public bool Repair(int amount) => Building?.Repair(amount) ?? false;
 
-        public Color GetRenderColor()
-        {
-            return Building?.GetRenderColor() ?? Color.White;
-        }
+        public Color GetRenderColor() => Building?.GetRenderColor() ?? Color.White;
     }
 }

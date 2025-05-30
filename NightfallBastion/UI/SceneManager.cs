@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -11,7 +12,7 @@ namespace NightfallBastion.UI
     {
         MainMenu,
         GameWorld,
-        Settings
+        Settings,
     }
 
     public class SceneManager
@@ -36,6 +37,7 @@ namespace NightfallBastion.UI
             _scenes[Scenes.MainMenu] = Scene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
             _scenes[Scenes.GameWorld] = Scene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
             _scenes[Scenes.Settings] = Scene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
+
             ShowScene(Scenes.MainMenu);
         }
 
@@ -46,24 +48,17 @@ namespace NightfallBastion.UI
                 _shownScenes.Push(scene);
         }
 
-        public void HideScene(Scenes key)
-        {
-            var scene = _scenes[key];
-            if (_shownScenes.Count > 0 && _shownScenes.Peek() == scene)
-                _shownScenes.Pop();
-        }
-
-        public void ChangeScene(Scenes key)
-        {
-            if (_shownScenes.Count > 0)
-                _shownScenes.Pop();
-            ShowScene(key);
-        }
-
         public void HideCurrentScene()
         {
             if (_shownScenes.Count > 1)
                 _shownScenes.Pop();
+        }
+
+        public Scene? GetScene(Scenes key)
+        {
+            if (_scenes.TryGetValue(key, out var scene))
+                return scene;
+            return null;
         }
 
         public void Update(GameTime gameTime)
@@ -74,14 +69,13 @@ namespace NightfallBastion.UI
 
         public void Draw()
         {
-            foreach (var scene in _shownScenes.Reverse())
-            {
-                if (scene is GameWorldScene gameWorldScene)
-                    gameWorldScene.View.Draw();
+            var currentScene = _shownScenes.Count > 0 ? _shownScenes.Peek() : null;
 
-                _desktop.Root = scene.View.RootElement;
-                _desktop.Render();
-            }
+            if (currentScene is GameWorldScene gameWorldScene)
+                gameWorldScene.View.Draw();
+
+            _desktop.Root = currentScene?.View.RootElement;
+            _desktop.Render();
         }
     }
 }

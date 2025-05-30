@@ -7,6 +7,10 @@ namespace NightfallBastion.Core
     {
         public int CameraSpeed { get; set; } = 400;
         public float EnemySpawnRate { get; set; } = 1.0f;
+        public float EnemySpawnInterval { get; set; } = 3.0f;
+        public int EnemyHealth { get; set; } = 50;
+        public float EnemySpeed { get; set; } = 10.0f;
+        public int EnemyDamage { get; set; } = 25;
         private static readonly string SavePath = "gameplay_settings.json";
 
         public void Save()
@@ -25,6 +29,10 @@ namespace NightfallBastion.Core
                 {
                     CameraSpeed = loaded.CameraSpeed;
                     EnemySpawnRate = loaded.EnemySpawnRate;
+                    EnemySpawnInterval = loaded.EnemySpawnInterval;
+                    EnemyHealth = loaded.EnemyHealth;
+                    EnemySpeed = loaded.EnemySpeed;
+                    EnemyDamage = loaded.EnemyDamage;
                 }
             }
         }

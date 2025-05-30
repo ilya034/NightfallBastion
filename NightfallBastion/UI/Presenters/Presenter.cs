@@ -7,5 +7,7 @@ namespace NightfallBastion.UI
         protected readonly NightfallBastionGame _game = game;
 
         public virtual void RegisterEvents() { }
+
+        public virtual void Dispose() { }
     }
 }

@@ -23,6 +23,12 @@ namespace NightfallBastion.UI
 
         public virtual void Update(GameTime gameTime) { }
 
+        public virtual void Dispose()
+        {
+            Presenter?.Dispose();
+            View?.UnloadContent();
+        }
+
         public static TScene Create<TScene, TPresenter, TView>(NightfallBastionGame game)
             where TScene : Scene
             where TPresenter : Presenter

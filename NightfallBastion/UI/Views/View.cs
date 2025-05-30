@@ -11,5 +11,7 @@ namespace NightfallBastion.UI
         public virtual void LoadContent() { }
 
         public virtual void BuildUI() { }
+
+        public virtual void UnloadContent() { }
     }
 }

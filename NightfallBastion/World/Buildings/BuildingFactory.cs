@@ -5,97 +5,46 @@ namespace NightfallBastion.World.Buildings
 {
     public static class BuildingFactory
     {
-        public static EmptySpace CreateEmptySpace(NightfallBastionGame game)
+        private static Rectangle CreateSourceRect(
+            NightfallBastionGame game,
+            int offsetX = 0,
+            int offsetY = 0
+        )
         {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX,
-                game.CoreSettings.DefaultTileTextureY,
+            return new Rectangle(
+                game.CoreSettings.DefaultTileTextureX + offsetX * game.CoreSettings.DefaultTileSize,
+                game.CoreSettings.DefaultTileTextureY + offsetY * game.CoreSettings.DefaultTileSize,
                 game.CoreSettings.DefaultTileSize,
                 game.CoreSettings.DefaultTileSize
             );
-            return new EmptySpace(sourceRect);
         }
 
-        public static WeakWall CreateWeakWall(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new WeakWall(sourceRect);
-        }
+        public static EmptySpace CreateEmptySpace(NightfallBastionGame game) =>
+            new(CreateSourceRect(game));
 
-        public static StandardWall CreateStandardWall(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new StandardWall(sourceRect);
-        }
+        public static WeakWall CreateWeakWall(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 1));
 
-        public static MediumWall CreateMediumWall(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new MediumWall(sourceRect);
-        }
+        public static StandardWall CreateStandardWall(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 1));
 
-        public static StrongWall CreateStrongWall(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new StrongWall(sourceRect);
-        }
+        public static MediumWall CreateMediumWall(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 1));
 
-        public static EnemySpawn CreateEnemySpawn(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + 2 * game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new EnemySpawn(sourceRect);
-        }
+        public static StrongWall CreateStrongWall(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 1));
 
-        public static PlayerCore CreatePlayerCore(NightfallBastionGame game)
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + 3 * game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new PlayerCore(sourceRect);
-        }
+        public static EnemySpawn CreateEnemySpawn(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 2));
+
+        public static PlayerCore CreatePlayerCore(NightfallBastionGame game) =>
+            new(CreateSourceRect(game, 3));
 
         public static Turret CreateTurret(
             NightfallBastionGame game,
             int damage = 10,
             int range = 3,
             float attackSpeed = 1.0f
-        )
-        {
-            var sourceRect = new Rectangle(
-                game.CoreSettings.DefaultTileTextureX + 4 * game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileTextureY,
-                game.CoreSettings.DefaultTileSize,
-                game.CoreSettings.DefaultTileSize
-            );
-            return new Turret(sourceRect, damage, range, attackSpeed);
-        }
+        ) => new(CreateSourceRect(game, 4), damage, range, attackSpeed);
     }
 }

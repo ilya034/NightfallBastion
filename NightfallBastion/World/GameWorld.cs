@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
+using NightfallBastion.UI;
 using NightfallBastion.World.Buildings;
 
 namespace NightfallBastion.World
@@ -18,6 +18,9 @@ namespace NightfallBastion.World
             CreateCamera();
 
             ECSManager.AddSystem(new DamageSystem(this));
+            ECSManager.AddSystem(new EnemySpawnSystem(this));
+            ECSManager.AddSystem(new EnemyMovementSystem(this));
+            ECSManager.AddSystem(new EnemyCollisionSystem(this));
 
             TileMap = new TileMap(
                 Game.CoreSettings.DefaultMapWidth,
@@ -36,12 +39,10 @@ namespace NightfallBastion.World
                         || x == Game.CoreSettings.DefaultMapWidth - 1
                         || y == Game.CoreSettings.DefaultMapHeight - 1
                     )
-                    {
                         tile = new Tile(BuildingFactory.CreateStrongWall(Game));
-                    }
                     else if ((x == 5 && y >= 5 && y <= 10) || (x == 15 && y >= 5 && y <= 10))
                         tile = new Tile(BuildingFactory.CreateMediumWall(Game));
-                    else if ((x >= 8 && x <= 12 && y == 8) || (x >= 8 && x <= 12 && y == 12))
+                    else if (x >= 8 && x <= 12 && y == 8)
                         tile = new Tile(BuildingFactory.CreateWeakWall(Game));
                     else if (x == 2 && y == 2)
                         tile = new Tile(BuildingFactory.CreateEnemySpawn(Game));
@@ -56,6 +57,17 @@ namespace NightfallBastion.World
                     TileMap.SetTile(x, y, tile);
                 }
             }
+
+            var scene = Game.SceneManager.GetScene(Scenes.GameWorld);
+            if (scene is GameWorldScene gameWorldScene)
+                (gameWorldScene.Presenter as GameWorldPresenter)?.MarkTileMapForUpdate();
+        }
+
+        public void Dispose()
+        {
+            ECSManager?.Dispose();
+            TileMap = null;
+            Camera = null;
         }
 
         private void CreateCamera()
@@ -87,31 +99,6 @@ namespace NightfallBastion.World
 
         public bool IsInCameraView(Vector2 worldPosition) => Camera.IsInView(worldPosition);
 
-        private void UpdateCamera(GameTime gameTime)
-        {
-            var keyboard = Game.CurrentKeyboardState;
-            float speed =
-                Game.GameplaySettings.CameraSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            var pos = Camera.Position;
-            if (keyboard.IsKeyDown(Keys.W) || keyboard.IsKeyDown(Keys.Up))
-                pos.Y -= speed;
-            if (keyboard.IsKeyDown(Keys.S) || keyboard.IsKeyDown(Keys.Down))
-                pos.Y += speed;
-            if (keyboard.IsKeyDown(Keys.A) || keyboard.IsKeyDown(Keys.Left))
-                pos.X -= speed;
-            if (keyboard.IsKeyDown(Keys.D) || keyboard.IsKeyDown(Keys.Right))
-                pos.X += speed;
-            Camera.Position = pos;
-            if (keyboard.IsKeyDown(Keys.OemPlus) || keyboard.IsKeyDown(Keys.E))
-                Camera.Zoom += 0.01f;
-            if (keyboard.IsKeyDown(Keys.OemMinus) || keyboard.IsKeyDown(Keys.Q))
-                Camera.Zoom = Math.Max(0.1f, Camera.Zoom - 0.01f);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            UpdateCamera(gameTime);
-            ECSManager.Update(gameTime);
-        }
+        public void Update(GameTime gameTime) => ECSManager.Update(gameTime);
     }
 }

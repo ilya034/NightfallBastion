@@ -11,6 +11,13 @@ namespace NightfallBastion.World
         private readonly List<System> _systems = [];
         private readonly Dictionary<Type, Dictionary<Entity, Component>> _components = [];
 
+        public void Dispose()
+        {
+            _entities.Clear();
+            _systems.Clear();
+            _components.Clear();
+        }
+
         public Entity CreateEntity()
         {
             var entity = new Entity(_nextEntityId++);
@@ -53,6 +60,50 @@ namespace NightfallBastion.World
 
             return null;
         }
+
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1>()
+            where T1 : Component
+        {
+            if (!_components.TryGetValue(typeof(T1), out var components1))
+                yield break;
+
+            foreach (var entity in components1.Keys)
+                yield return entity;
+        }
+
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2>()
+            where T1 : Component
+            where T2 : Component
+        {
+            if (
+                !_components.TryGetValue(typeof(T1), out var components1)
+                || !_components.TryGetValue(typeof(T2), out var components2)
+            )
+                yield break;
+
+            foreach (var entity in components1.Keys)
+                if (components2.ContainsKey(entity))
+                    yield return entity;
+        }
+
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3>()
+            where T1 : Component
+            where T2 : Component
+            where T3 : Component
+        {
+            if (
+                !_components.TryGetValue(typeof(T1), out var components1)
+                || !_components.TryGetValue(typeof(T2), out var components2)
+                || !_components.TryGetValue(typeof(T3), out var components3)
+            )
+                yield break;
+
+            foreach (var entity in components1.Keys)
+                if (components2.ContainsKey(entity) && components3.ContainsKey(entity))
+                    yield return entity;
+        }
+
+        public void RemoveEntity(Entity entity) => DestroyEntity(entity);
 
         public void AddSystem(System system) => _systems.Add(system);
 
