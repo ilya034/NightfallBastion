@@ -18,6 +18,7 @@ namespace NightfallBastion.World.ECS.Components
     public struct MovementComp : IComponent
     {
         public Vector2 nextPosition;
+        public bool isMoving;
         public float speed;
     }
 
@@ -37,9 +38,33 @@ namespace NightfallBastion.World.ECS.Components
         public Team team;
     }
 
+    public struct PhysicsComp : IComponent
+    {
+        public int mass;
+        public bool isSolid;
+        public Rectangle hitbox;
+    }
+
+    public struct WeaponComp : IComponent
+    {
+        public WeaponType type;
+    }
+
+    public struct EnemyComp : IComponent
+    {
+        public EnemyType type;
+    }
+
     public struct DamageComp : IComponent
     {
         public int damage;
+    }
+
+    public struct TileMapComp : IComponent
+    {
+        public int width;
+        public int height;
+        public TileData[,] tileMap;
     }
 
     public struct PathfindingComp : IComponent

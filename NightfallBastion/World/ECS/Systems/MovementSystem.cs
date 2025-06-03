@@ -24,6 +24,25 @@ namespace NightfallBastion.World
 
                 if (_world.ECSManager.GetComponent<HealthComp>(entity).currentHealth <= 0)
                     continue;
+
+                if (!movement.isMoving)
+                    continue;
+
+                if ((movement.nextPosition - position.position).Length() < 0.01f)
+                {
+                    position.position = movement.nextPosition;
+                    movement.isMoving = false;
+                    continue;
+                }
+
+                var direction = movement.nextPosition - position.position;
+                direction.Normalize();
+                position.position += direction * movement.speed * deltaTime;
+
+                tilePosition.tilePosition = new Vector2(
+                    (int)position.position.X / 32,
+                    (int)position.position.Y / 32
+                );
             }
         }
     }
