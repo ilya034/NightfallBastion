@@ -1,28 +1,24 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
-using NightfallBastion.UI.Adapters;
-using NightfallBastion.UI.Input;
+using NightfallBastion.UI.Cache;
 using NightfallBastion.UI.ViewModels;
 using NightfallBastion.World;
+using NightfallBastion.World.ECS.Commands;
+using NightfallBastion.World.ECS.Events;
 
 namespace NightfallBastion.UI
 {
-    public class GameWorldPresenter : Presenter
+    public class GameWorldPresenter : Presenter, IDisposable
     {
         private readonly GameWorldView _view;
-        private readonly ViewModelAdapter _viewModelAdapter;
+        private readonly ViewModelCache _viewModelCache;
         private readonly GameWorld _gameWorld;
-
-        private TileMapViewModel? _cachedTileMapViewModel;
-        private CameraViewModel? _cachedCameraViewModel;
-        private List<EnemyViewModel> _cachedEnemyViewModels;
+        private readonly CommandBus _commandBus;
+        private readonly EventBus _eventBus;
 
         private bool _tileMapNeedsUpdate = true;
-        private bool _cameraViewNeedsUpdate = true;
-        private bool _enemiesNeedUpdate = true;
 
         public GameWorldPresenter(NightfallBastionGame game, GameWorldView view)
             : base(game)
@@ -30,10 +26,21 @@ namespace NightfallBastion.UI
             _view = view ?? throw new ArgumentNullException(nameof(view));
             _gameWorld = game.GameWorld ?? throw new ArgumentNullException(nameof(game.GameWorld));
 
-            _viewModelAdapter = new ViewModelAdapter();
-            _cachedEnemyViewModels = new List<EnemyViewModel>();
+            _commandBus = _gameWorld.CommandBus;
+            _eventBus = _gameWorld.EventBus;
+            _viewModelCache = new ViewModelCache();
 
+            SubscribeToEvents();
             InitializeView();
+        }
+
+        private void SubscribeToEvents()
+        {
+            _eventBus.Subscribe<EntityCreatedEvent>(OnEntityCreated);
+            _eventBus.Subscribe<EntityDestroyedEvent>(OnEntityDestroyed);
+            _eventBus.Subscribe<ComponentChangedEvent>(OnComponentChanged);
+            _eventBus.Subscribe<HealthChangedEvent>(OnHealthChanged);
+            _eventBus.Subscribe<CameraChangedEvent>(OnCameraChanged);
         }
 
         private void InitializeView()
@@ -48,7 +55,6 @@ namespace NightfallBastion.UI
             var mouseState = Mouse.GetState();
 
             HandleInput(keyboardState, mouseState, gameTime);
-            UpdateModel(gameTime);
             UpdateView();
 
             _game.SceneManager.InputHandler.UpdatePreviousStates(keyboardState, mouseState);
@@ -67,7 +73,19 @@ namespace NightfallBastion.UI
                 _game.GameplaySettings.CameraSpeed
             );
 
-            ApplyCameraInput(cameraInput);
+            if (cameraInput.MovementDirection != Vector2.Zero)
+            {
+                _commandBus.EnqueueCommand(
+                    new MoveCameraCommand(cameraInput.MovementDirection, cameraInput.MovementSpeed)
+                );
+                ApplyCameraMovement(cameraInput.MovementDirection, cameraInput.MovementSpeed);
+            }
+
+            if (Math.Abs(cameraInput.ZoomDelta) > 0.001f)
+            {
+                _commandBus.EnqueueCommand(new ZoomCameraCommand(cameraInput.ZoomDelta));
+                ApplyCameraZoom(cameraInput.ZoomDelta);
+            }
 
             var gameplayInput = _game.SceneManager.InputHandler.HandleGameplayInput(
                 keyboardState,
@@ -75,82 +93,62 @@ namespace NightfallBastion.UI
                 gameTime
             );
 
-            ApplyGameplayInput(gameplayInput, gameTime);
-        }
-
-        private void ApplyCameraInput(CameraInputData cameraInput)
-        {
-            var camera = _gameWorld.Camera;
-
-            if (cameraInput.MovementDirection != Vector2.Zero)
-            {
-                var newPosition =
-                    camera.Position + cameraInput.MovementDirection * cameraInput.MovementSpeed;
-                camera.Position = newPosition;
-                _cameraViewNeedsUpdate = true;
-            }
-
-            if (Math.Abs(cameraInput.ZoomDelta) > 0.001f)
-            {
-                var newZoom = Math.Max(0.1f, camera.Zoom + cameraInput.ZoomDelta);
-                camera.Zoom = newZoom;
-                _cameraViewNeedsUpdate = true;
-            }
-        }
-
-        private void ApplyGameplayInput(GameplayInputData gameplayInput, GameTime gameTime)
-        {
             if (gameplayInput.LeftMouseClicked && gameplayInput.MouseClickPosition.HasValue)
-                HandleLeftMouseClick(gameplayInput.MouseClickPosition.Value);
+            {
+                var worldPosition = _gameWorld.ScreenToWorld(
+                    gameplayInput.MouseClickPosition.Value
+                );
+                _commandBus.EnqueueCommand(new SelectEntityCommand(worldPosition));
+            }
 
             if (gameplayInput.RightMouseClicked && gameplayInput.MouseClickPosition.HasValue)
-                HandleRightMouseClick(gameplayInput.MouseClickPosition.Value);
+            {
+                var worldPosition = _gameWorld.ScreenToWorld(
+                    gameplayInput.MouseClickPosition.Value
+                );
+                // Пример команды создания врага для тестирования
+                _commandBus.EnqueueCommand(new SpawnEnemyCommand(worldPosition, EnemyType.boy));
+            }
 
             if (gameplayInput.BuildingSelectionPressed)
-                HandleBuildingSelection();
+            {
+                Console.WriteLine("Building selection pressed");
+            }
         }
 
-        private void HandleLeftMouseClick(Vector2 screenPosition)
+        private void ApplyCameraMovement(Vector2 direction, float speed)
         {
-            var worldPosition = _gameWorld.ScreenToWorld(screenPosition);
-            Console.WriteLine($"Left click at world position: {worldPosition}");
+            var camera = _gameWorld.Camera;
+            var newPosition = camera.Position + direction * speed;
+            camera.Position = newPosition;
+            _viewModelCache.InvalidateCamera();
+
+            _eventBus.Publish(new CameraChangedEvent(camera.Position, camera.Zoom));
         }
 
-        private void HandleRightMouseClick(Vector2 screenPosition)
+        private void ApplyCameraZoom(float zoomDelta)
         {
-            var worldPosition = _gameWorld.ScreenToWorld(screenPosition);
-            Console.WriteLine($"Right click at world position: {worldPosition}");
-        }
+            var camera = _gameWorld.Camera;
+            var newZoom = Math.Max(0.1f, camera.Zoom + zoomDelta);
+            camera.Zoom = newZoom;
+            _viewModelCache.InvalidateCamera();
 
-        private void HandleBuildingSelection()
-        {
-            Console.WriteLine("Building selection pressed");
-        }
-
-        private void UpdateModel(GameTime gameTime)
-        {
-            _gameWorld.ECSManager.Update(gameTime);
-            _enemiesNeedUpdate = true;
+            _eventBus.Publish(new CameraChangedEvent(camera.Position, camera.Zoom));
         }
 
         private void UpdateView()
         {
+            // Обновляем ViewModels через кэш
+            var enemyViewModels = _viewModelCache.GetEntityViewModels(_gameWorld.ECSManager);
+            _view.UpdateEnemies(enemyViewModels);
+
+            var cameraViewModel = _viewModelCache.GetCameraViewModel(_gameWorld.Camera);
+            _view.CurrentCameraViewModel = cameraViewModel;
+
             if (_tileMapNeedsUpdate)
             {
                 UpdateTileMapView();
                 _tileMapNeedsUpdate = false;
-            }
-
-            if (_cameraViewNeedsUpdate)
-            {
-                UpdateCameraView();
-                _cameraViewNeedsUpdate = false;
-            }
-
-            if (_enemiesNeedUpdate)
-            {
-                UpdateEnemiesView();
-                _enemiesNeedUpdate = false;
             }
 
             _view.Draw();
@@ -158,47 +156,56 @@ namespace NightfallBastion.UI
 
         private void UpdateTileMapView()
         {
-            if (_gameWorld.TileMap != null)
+            // TileMap пока не реализован в новой архитектуре
+            // Создаем пустую TileMapViewModel чтобы избежать ошибок
+            try
             {
-                _cachedTileMapViewModel = _viewModelAdapter.CreateTileMapViewModel(
-                    _gameWorld.TileMap
-                );
-
-                _view.CurrentTileMapViewModel = _cachedTileMapViewModel;
+                var emptyTileMapViewModel = new TileMapViewModel();
+                _view.CurrentTileMapViewModel = emptyTileMapViewModel;
             }
-            else
-                Console.WriteLine($"[DEBUG] TileMap is null, cannot update view");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DEBUG] Error updating TileMap view: {ex.Message}");
+            }
         }
 
-        private void UpdateCameraView()
+        // Event handlers
+        private void OnEntityCreated(EntityCreatedEvent evt)
         {
-            if (_cachedCameraViewModel == null)
-                _cachedCameraViewModel = _viewModelAdapter.CreateCameraViewModel(_gameWorld.Camera);
-            else
-                _viewModelAdapter.UpdateCameraViewModel(_cachedCameraViewModel, _gameWorld.Camera);
-
-            _view.CurrentCameraViewModel = _cachedCameraViewModel;
+            _viewModelCache.InvalidateEntity(evt.Entity.Id);
         }
 
-        private void UpdateEnemiesView()
+        private void OnEntityDestroyed(EntityDestroyedEvent evt)
         {
-            _viewModelAdapter.UpdateEnemyViewModels(_cachedEnemyViewModels, _gameWorld.ECSManager);
-            _view.UpdateEnemies(_cachedEnemyViewModels);
+            _viewModelCache.InvalidateEntity(evt.Entity.Id);
+        }
+
+        private void OnComponentChanged(ComponentChangedEvent evt)
+        {
+            _viewModelCache.InvalidateEntity(evt.Entity.Id);
+        }
+
+        private void OnHealthChanged(HealthChangedEvent evt)
+        {
+            _viewModelCache.InvalidateEntity(evt.Entity.Id);
+        }
+
+        private void OnCameraChanged(CameraChangedEvent evt)
+        {
+            _viewModelCache.InvalidateCamera();
         }
 
         private void ForceUpdateAllViewModels()
         {
             _tileMapNeedsUpdate = true;
-            _cameraViewNeedsUpdate = true;
-            _enemiesNeedUpdate = true;
-
+            _viewModelCache.Clear();
             UpdateView();
         }
 
         public void UpdateCameraViewport()
         {
             _gameWorld.UpdateCameraViewport();
-            _cameraViewNeedsUpdate = true;
+            _viewModelCache.InvalidateCamera();
         }
 
         public void MarkTileMapForUpdate()
@@ -208,7 +215,13 @@ namespace NightfallBastion.UI
 
         public void MarkCameraForUpdate()
         {
-            _cameraViewNeedsUpdate = true;
+            _viewModelCache.InvalidateCamera();
+        }
+
+        public void Dispose()
+        {
+            // Отписка от событий не требуется, так как EventBus будет уничтожен вместе с GameWorld
+            _viewModelCache?.Clear();
         }
     }
 }

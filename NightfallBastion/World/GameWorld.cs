@@ -2,16 +2,27 @@
 using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 using NightfallBastion.UI;
+using NightfallBastion.World.ECS.Commands;
 using NightfallBastion.World.ECS.Components;
+using NightfallBastion.World.ECS.Events;
 using NightfallBastion.World.ECS.Systems;
 
 namespace NightfallBastion.World
 {
-    public class GameWorld(NightfallBastionGame game)
+    public class GameWorld : IDisposable
     {
-        public NightfallBastionGame Game { get; private set; } = game;
+        public NightfallBastionGame Game { get; private set; }
         public ECSManager ECSManager { get; private set; } = new();
         public Camera Camera { get; private set; }
+        public CommandBus CommandBus { get; private set; }
+        public EventBus EventBus { get; private set; }
+
+        public GameWorld(NightfallBastionGame game)
+        {
+            Game = game;
+            EventBus = new EventBus();
+            CommandBus = new CommandBus(ECSManager);
+        }
 
         public void LoadContent()
         {
@@ -20,7 +31,7 @@ namespace NightfallBastion.World
             EntitiesFactory.CreateTileMap(
                 this,
                 Game.CoreSettings.DefaultMapWidth,
-                Game.CoreSettings.DefaultButtonHeight
+                Game.CoreSettings.DefaultMapHeight
             );
 
             AddSystems();
@@ -33,13 +44,18 @@ namespace NightfallBastion.World
         public void Dispose()
         {
             ECSManager?.Dispose();
+            CommandBus?.Clear();
+            EventBus?.Clear();
             Camera = null;
         }
 
         private void AddSystems()
         {
+            ECSManager.AddSystem(new EventAwareMovementSystem(this, EventBus));
+            ECSManager.AddSystem(new EventAwareHealthSystem(this, EventBus));
+            ECSManager.AddSystem(new CommandProcessingSystem(this, CommandBus));
+
             ECSManager.AddSystem(new PathfindSystem(this));
-            ECSManager.AddSystem(new MovementSystem(this));
             ECSManager.AddSystem(new PhysicsSystem(this));
             ECSManager.AddSystem(new WeaponSystem(this));
         }
@@ -73,6 +89,10 @@ namespace NightfallBastion.World
 
         public bool IsInCameraView(Vector2 worldPosition) => Camera.IsInView(worldPosition);
 
-        public void Update(GameTime gameTime) => ECSManager.Update(gameTime);
+        public void Update(GameTime gameTime)
+        {
+            CommandBus.ProcessCommands();
+            ECSManager.Update(gameTime);
+        }
     }
 }

@@ -56,7 +56,9 @@ namespace NightfallBastion.Core
             if (CurrentKeyboardState.IsKeyDown(Keys.Escape))
                 SceneManager.HideCurrentScene();
 
+            GameWorld.Update(gameTime);
             SceneManager.Update(gameTime);
+
             base.Update(gameTime);
         }
 
