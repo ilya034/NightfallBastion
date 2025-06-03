@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 using NightfallBastion.UI;
 using NightfallBastion.World.Buildings;
+using NightfallBastion.World.Floors;
 
 namespace NightfallBastion.World
 {
@@ -19,7 +20,7 @@ namespace NightfallBastion.World
 
             ECSManager.AddSystem(new DamageSystem(this));
             ECSManager.AddSystem(new EnemySpawnSystem(this));
-            ECSManager.AddSystem(new EnemyMovementSystem(this));
+            ECSManager.AddSystem(new MovementSystem(this));
             ECSManager.AddSystem(new EnemyCollisionSystem(this));
 
             TileMap = new TileMap(
@@ -39,20 +40,38 @@ namespace NightfallBastion.World
                         || x == Game.CoreSettings.DefaultMapWidth - 1
                         || y == Game.CoreSettings.DefaultMapHeight - 1
                     )
-                        tile = new Tile(BuildingFactory.CreateStrongWall(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreateStrongWall(Game)
+                        );
                     else if ((x == 5 && y >= 5 && y <= 10) || (x == 15 && y >= 5 && y <= 10))
-                        tile = new Tile(BuildingFactory.CreateMediumWall(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreateMediumWall(Game)
+                        );
                     else if (x >= 8 && x <= 12 && y == 8)
-                        tile = new Tile(BuildingFactory.CreateWeakWall(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreateWeakWall(Game)
+                        );
                     else if (x == 2 && y == 2)
-                        tile = new Tile(BuildingFactory.CreateEnemySpawn(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreateEnemySpawn(Game)
+                        );
                     else if (
                         x == Game.CoreSettings.DefaultMapWidth / 2
                         && y == Game.CoreSettings.DefaultMapHeight / 2
                     )
-                        tile = new Tile(BuildingFactory.CreatePlayerCore(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreatePlayerCore(Game)
+                        );
                     else
-                        tile = new Tile(BuildingFactory.CreateEmptySpace(Game));
+                        tile = new Tile(
+                            FloorFactory.CreateStandartFloor(Game),
+                            BuildingFactory.CreateEmptySpace(Game)
+                        );
 
                     TileMap.SetTile(x, y, tile);
                 }

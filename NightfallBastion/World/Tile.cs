@@ -1,36 +1,13 @@
-using Microsoft.Xna.Framework;
+using System;
 using NightfallBastion.World.Buildings;
+using NightfallBastion.World.Floors;
 
 namespace NightfallBastion.World
 {
-    public class Tile(Building? building = null)
+    public class Tile(Floor floor, Building? building = null)
     {
-        public Building? Building { get; private set; } = building;
+        public Floor Floor { get; } = floor ?? throw new ArgumentNullException(nameof(floor));
 
-        public bool IsSolid => Building?.IsSolid ?? false;
-
-        public bool IsDestroyed => Building?.IsDestroyed ?? false;
-
-        public Rectangle SourceRect => Building?.SourceRect ?? Rectangle.Empty;
-
-        public int MaxHealth => Building?.MaxHealth ?? 0;
-
-        public int CurrentHealth => Building?.CurrentHealth ?? 0;
-
-        public void SetBuilding(Building? building)
-        {
-            Building = building;
-        }
-
-        public void RemoveBuilding()
-        {
-            Building = null;
-        }
-
-        public bool TakeDamage(int damage) => Building?.TakeDamage(damage) ?? false;
-
-        public bool Repair(int amount) => Building?.Repair(amount) ?? false;
-
-        public Color GetRenderColor() => Building?.GetRenderColor() ?? Color.White;
+        public Building? Building { get; set; } = building;
     }
 }

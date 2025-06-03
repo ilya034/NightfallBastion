@@ -13,7 +13,6 @@ namespace NightfallBastion.UI
     public class GameWorldPresenter : Presenter
     {
         private readonly GameWorldView _view;
-        private readonly InputHandler _inputHandler;
         private readonly ViewModelAdapter _viewModelAdapter;
         private readonly GameWorld _gameWorld;
 
@@ -31,7 +30,6 @@ namespace NightfallBastion.UI
             _view = view ?? throw new ArgumentNullException(nameof(view));
             _gameWorld = game.GameWorld ?? throw new ArgumentNullException(nameof(game.GameWorld));
 
-            _inputHandler = new InputHandler();
             _viewModelAdapter = new ViewModelAdapter();
             _cachedEnemyViewModels = new List<EnemyViewModel>();
 
@@ -53,7 +51,7 @@ namespace NightfallBastion.UI
             UpdateModel(gameTime);
             UpdateView();
 
-            _inputHandler.UpdatePreviousStates(keyboardState, mouseState);
+            _game.SceneManager.InputHandler.UpdatePreviousStates(keyboardState, mouseState);
         }
 
         private void HandleInput(
@@ -62,7 +60,7 @@ namespace NightfallBastion.UI
             GameTime gameTime
         )
         {
-            var cameraInput = _inputHandler.HandleCameraInput(
+            var cameraInput = _game.SceneManager.InputHandler.HandleCameraInput(
                 keyboardState,
                 mouseState,
                 gameTime,
@@ -71,7 +69,7 @@ namespace NightfallBastion.UI
 
             ApplyCameraInput(cameraInput);
 
-            var gameplayInput = _inputHandler.HandleGameplayInput(
+            var gameplayInput = _game.SceneManager.InputHandler.HandleGameplayInput(
                 keyboardState,
                 mouseState,
                 gameTime

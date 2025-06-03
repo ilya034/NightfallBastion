@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using NightfallBastion.World.ECS.Components;
 
 namespace NightfallBastion.World
 {
@@ -9,7 +10,7 @@ namespace NightfallBastion.World
         private int _nextEntityId = 0;
         private readonly List<Entity> _entities = [];
         private readonly List<System> _systems = [];
-        private readonly Dictionary<Type, Dictionary<Entity, Component>> _components = [];
+        private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = [];
 
         public void Dispose()
         {
@@ -33,24 +34,24 @@ namespace NightfallBastion.World
         }
 
         public void AddComponent<T>(Entity entity, T component)
-            where T : Component
+            where T : IComponent
         {
             var type = typeof(T);
             if (!_components.ContainsKey(type))
-                _components[type] = new Dictionary<Entity, Component>();
+                _components[type] = new Dictionary<Entity, IComponent>();
 
             _components[type][entity] = component;
         }
 
         public void RemoveComponent<T>(Entity entity)
-            where T : Component
+            where T : IComponent
         {
             if (_components.TryGetValue(typeof(T), out var entityComponents))
                 entityComponents.Remove(entity);
         }
 
         public T? GetComponent<T>(Entity entity)
-            where T : Component
+            where T : IComponent
         {
             if (
                 _components.TryGetValue(typeof(T), out var entityComponents)
@@ -58,49 +59,74 @@ namespace NightfallBastion.World
             )
                 return (T)component;
 
-            return null;
+            return default;
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1>()
-            where T1 : Component
+        public IEnumerable<Entity> GetEntitiesWithComponents(params Type[] componentTypes)
         {
-            if (!_components.TryGetValue(typeof(T1), out var components1))
+            if (componentTypes == null || componentTypes.Length == 0)
                 yield break;
 
-            foreach (var entity in components1.Keys)
+            List<HashSet<Entity>> entitySets = new();
+            foreach (var type in componentTypes)
+            {
+                if (!_components.TryGetValue(type, out var components))
+                    yield break;
+                entitySets.Add(new HashSet<Entity>(components.Keys));
+            }
+
+            var intersection = entitySets[0];
+            for (int i = 1; i < entitySets.Count; i++)
+                intersection.IntersectWith(entitySets[i]);
+
+            foreach (var entity in intersection)
                 yield return entity;
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2>()
-            where T1 : Component
-            where T2 : Component
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1>()
+            where T1 : IComponent
         {
-            if (
-                !_components.TryGetValue(typeof(T1), out var components1)
-                || !_components.TryGetValue(typeof(T2), out var components2)
-            )
-                yield break;
+            return GetEntitiesWithComponents(typeof(T1));
+        }
 
-            foreach (var entity in components1.Keys)
-                if (components2.ContainsKey(entity))
-                    yield return entity;
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2>()
+            where T1 : IComponent
+            where T2 : IComponent
+        {
+            return GetEntitiesWithComponents(typeof(T1), typeof(T2));
         }
 
         public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3>()
-            where T1 : Component
-            where T2 : Component
-            where T3 : Component
+            where T1 : IComponent
+            where T2 : IComponent
+            where T3 : IComponent
         {
-            if (
-                !_components.TryGetValue(typeof(T1), out var components1)
-                || !_components.TryGetValue(typeof(T2), out var components2)
-                || !_components.TryGetValue(typeof(T3), out var components3)
-            )
-                yield break;
+            return GetEntitiesWithComponents(typeof(T1), typeof(T2), typeof(T3));
+        }
 
-            foreach (var entity in components1.Keys)
-                if (components2.ContainsKey(entity) && components3.ContainsKey(entity))
-                    yield return entity;
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3, T4>()
+            where T1 : IComponent
+            where T2 : IComponent
+            where T3 : IComponent
+            where T4 : IComponent
+        {
+            return GetEntitiesWithComponents(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
+        }
+
+        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3, T4, T5>()
+            where T1 : IComponent
+            where T2 : IComponent
+            where T3 : IComponent
+            where T4 : IComponent
+            where T5 : IComponent
+        {
+            return GetEntitiesWithComponents(
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+                typeof(T4),
+                typeof(T5)
+            );
         }
 
         public void RemoveEntity(Entity entity) => DestroyEntity(entity);

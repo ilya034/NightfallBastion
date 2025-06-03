@@ -62,13 +62,18 @@ namespace NightfallBastion.UI
                     tileSize
                 );
 
-                Color tileColor = GetTileColor(tile.TileType);
+                // Если у тайла есть ХП и MaxHealth — считаем, что это стена
+                bool isWall = tile.Health > 0 && tile.MaxHealth > 0;
+
+                Color tileColor = isWall
+                    ? GetWallColor(tile.Health, tile.MaxHealth)
+                    : GetTileColor(tile.TileType);
 
                 _game.SpriteBatch.Draw(_tilesetTexture, position, tile.TextureRegion, tileColor);
                 renderedTiles++;
 
-                if (_showHealthDisplay && tile.Health > 0 && _font != null)
-                    DrawTileHealth(tile, position);
+                if (_showHealthDisplay && isWall && _font != null)
+                    DrawWallHealth(tile, position);
             }
         }
 
@@ -147,6 +152,18 @@ namespace NightfallBastion.UI
             };
         }
 
+        private Color GetWallColor(int health, int maxHealth)
+        {
+            if (maxHealth <= 0) return Color.White;
+            float ratio = (float)health / maxHealth;
+            if (ratio > 0.7f)
+                return Color.LimeGreen;
+            else if (ratio > 0.3f)
+                return Color.Gold;
+            else
+                return Color.Red;
+        }
+
         private Color GetEnemyColor(EnemyViewModel enemy)
         {
             if (enemy.MaxHealth > 0)
@@ -163,19 +180,21 @@ namespace NightfallBastion.UI
             return Color.White;
         }
 
-        private void DrawTileHealth(TileViewModel tile, Rectangle position)
+        private void DrawWallHealth(TileViewModel tile, Rectangle position)
         {
-            if (_font == null || tile.Health < 0)
+            if (_font == null || tile.Health < 0 || tile.MaxHealth <= 0)
                 return;
 
-            string healthText = tile.Health.ToString();
+            string healthText = $"{tile.Health}/{tile.MaxHealth}";
             Vector2 textSize = _font.MeasureString(healthText);
             Vector2 textPosition = new(
                 position.X + (position.Width - textSize.X) / 2,
                 position.Y + (position.Height - textSize.Y) / 2
             );
 
-            _game.SpriteBatch.DrawString(_font, healthText, textPosition, Color.Black);
+            Color textColor = (float)tile.Health / tile.MaxHealth > 0.3f ? Color.Black : Color.White;
+
+            _game.SpriteBatch.DrawString(_font, healthText, textPosition, textColor);
         }
 
         private void DrawEnemyHealthBar(EnemyViewModel enemy, Vector2 position)
