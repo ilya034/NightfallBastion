@@ -22,15 +22,15 @@ namespace NightfallBastion.World.ECS.Components
         public float speed;
     }
 
-    public struct TargetComp : IComponent
+    public struct MovementTargetComp : IComponent
     {
         public Vector2 target;
     }
 
     public struct HealthComp : IComponent
     {
-        public int maxHealth;
-        public int currentHealth;
+        public float maxHealth;
+        public float currentHealth;
     }
 
     public struct TeamComp : IComponent
@@ -40,7 +40,7 @@ namespace NightfallBastion.World.ECS.Components
 
     public struct PhysicsComp : IComponent
     {
-        public int mass;
+        public float mass;
         public bool isSolid;
         public Rectangle hitbox;
     }
@@ -48,6 +48,9 @@ namespace NightfallBastion.World.ECS.Components
     public struct WeaponComp : IComponent
     {
         public WeaponType type;
+        public float damage;
+        public float range;
+        public float cooldown;
     }
 
     public struct EnemyComp : IComponent
@@ -57,7 +60,8 @@ namespace NightfallBastion.World.ECS.Components
 
     public struct DamageComp : IComponent
     {
-        public int damage;
+        public float damage;
+        public float piercing;
     }
 
     public struct TileMapComp : IComponent

@@ -12,13 +12,6 @@ namespace NightfallBastion.World
         private readonly List<System> _systems = [];
         private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = [];
 
-        public void Dispose()
-        {
-            _entities.Clear();
-            _systems.Clear();
-            _components.Clear();
-        }
-
         public Entity CreateEntity()
         {
             var entity = new Entity(_nextEntityId++);
@@ -139,6 +132,13 @@ namespace NightfallBastion.World
         {
             foreach (var system in _systems)
                 system.Update(gameTime);
+        }
+
+        public void Dispose()
+        {
+            _entities.Clear();
+            _systems.Clear();
+            _components.Clear();
         }
     }
 }

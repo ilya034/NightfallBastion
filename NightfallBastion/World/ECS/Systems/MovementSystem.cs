@@ -12,14 +12,12 @@ namespace NightfallBastion.World
 
             var entities = _world.ECSManager.GetEntitiesWithComponents<
                 PositionComp,
-                TilePositionComp,
                 MovementComp
             >();
 
             foreach (var entity in entities)
             {
                 var position = _world.ECSManager.GetComponent<PositionComp>(entity);
-                var tilePosition = _world.ECSManager.GetComponent<TilePositionComp>(entity);
                 var movement = _world.ECSManager.GetComponent<MovementComp>(entity);
 
                 if (_world.ECSManager.GetComponent<HealthComp>(entity).currentHealth <= 0)
@@ -38,11 +36,6 @@ namespace NightfallBastion.World
                 var direction = movement.nextPosition - position.position;
                 direction.Normalize();
                 position.position += direction * movement.speed * deltaTime;
-
-                tilePosition.tilePosition = new Vector2(
-                    (int)position.position.X / 32,
-                    (int)position.position.Y / 32
-                );
             }
         }
     }

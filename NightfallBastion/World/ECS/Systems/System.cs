@@ -6,6 +6,6 @@ namespace NightfallBastion.World
     {
         protected readonly GameWorld _world = world;
 
-        public virtual void Update(GameTime gameTime) { }
+        public abstract void Update(GameTime gameTime);
     }
 }
