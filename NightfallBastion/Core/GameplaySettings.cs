@@ -5,7 +5,7 @@ namespace NightfallBastion.Core
 {
     public class GameplaySettings
     {
-        public int CameraSpeed { get; set; } = 400;
+        public int DefaultCameraSpeed { get; set; } = 10;
         public float EnemySpawnRate { get; set; } = 1.0f;
         public float EnemySpawnInterval { get; set; } = 3.0f;
         public int EnemyHealth { get; set; } = 50;
@@ -27,7 +27,7 @@ namespace NightfallBastion.Core
                 var loaded = JsonSerializer.Deserialize<GameplaySettings>(json);
                 if (loaded != null)
                 {
-                    CameraSpeed = loaded.CameraSpeed;
+                    DefaultCameraSpeed = loaded.DefaultCameraSpeed;
                     EnemySpawnRate = loaded.EnemySpawnRate;
                     EnemySpawnInterval = loaded.EnemySpawnInterval;
                     EnemyHealth = loaded.EnemyHealth;

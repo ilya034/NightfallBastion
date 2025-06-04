@@ -10,6 +10,8 @@ namespace NightfallBastion.UI
         private Texture2D? _tileTexture;
         private Texture2D? _enemyTexture;
         private Texture2D? _wallTexture;
+        private Texture2D? _strongWallTexture;
+        private Texture2D? _mineTexture;
         private SpriteFont? _font;
         public RenderData _renderData;
 
@@ -17,6 +19,10 @@ namespace NightfallBastion.UI
         {
             _tileTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.TilesetAssetName);
             _wallTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.WallAssetName);
+            _strongWallTexture = _game.Content.Load<Texture2D>(
+                _game.CoreSettings.StrongWallAssetName
+            );
+            _mineTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.MineAssetName);
             _enemyTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.EnemyAssetName);
             _font = _game.Content.Load<SpriteFont>("Font");
         }
@@ -59,7 +65,7 @@ namespace NightfallBastion.UI
                         y * _game.CoreSettings.DefaultTileSize
                     );
 
-                    _game.SpriteBatch.Draw(_tileTexture, position, Color.White);
+                    _game.SpriteBatch.Draw(_tileTexture, position, Color.DimGray);
                 }
             }
         }
@@ -89,7 +95,7 @@ namespace NightfallBastion.UI
                         _game.CoreSettings.DefaultTileSize
                     ),
                     _game.CoreSettings.DefaultTextureRectangle,
-                    buildingColor
+                    Color.WhiteSmoke
                 );
 
                 // if (_showHealthDisplay && building.MaxHealth > 0)
@@ -122,7 +128,7 @@ namespace NightfallBastion.UI
                         _game.CoreSettings.DefaultTileSize
                     ),
                     _game.CoreSettings.DefaultTextureRectangle,
-                    entityColor
+                    Color.DimGray
                 );
 
                 // if (_showHealthDisplay && entity.maxHealth > 0)

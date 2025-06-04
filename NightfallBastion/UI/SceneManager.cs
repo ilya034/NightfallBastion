@@ -21,8 +21,6 @@ namespace NightfallBastion.UI
         private readonly Dictionary<Scenes, Scene> _scenes;
         private readonly Stack<Scene> _shownScenes;
         private readonly Desktop _desktop;
-        private readonly Input.InputHandler _inputHandler;
-        public Input.InputHandler InputHandler => _inputHandler;
 
         public SceneManager(NightfallBastionGame game)
         {
@@ -32,7 +30,6 @@ namespace NightfallBastion.UI
             _scenes = new Dictionary<Scenes, Scene>();
             _shownScenes = new Stack<Scene>();
             _desktop = new Desktop();
-            _inputHandler = new Input.InputHandler();
         }
 
         public void LoadContent()
@@ -49,7 +46,7 @@ namespace NightfallBastion.UI
                 Game
             );
 
-            ShowScene(Scenes.GameWorld);
+            ShowScene(Scenes.MainMenu);
         }
 
         public void ShowScene(Scenes key)

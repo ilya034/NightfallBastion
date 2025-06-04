@@ -14,7 +14,7 @@ namespace NightfallBastion.Core
         public GameplaySettings GameplaySettings { get; private set; }
         public SceneManager SceneManager { get; private set; }
         public GameWorld GameWorld { get; private set; }
-        public KeyboardState CurrentKeyboardState { get; private set; }
+        public InputHandler InputHandler { get; private set; }
 
         public NightfallBastionGame()
         {
@@ -34,6 +34,7 @@ namespace NightfallBastion.Core
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             GameplaySettings = new GameplaySettings();
+            InputHandler = new InputHandler();
             SceneManager = new SceneManager(this);
             GameWorld = new GameWorld(this);
             base.Initialize();
@@ -48,12 +49,12 @@ namespace NightfallBastion.Core
 
         protected override void Update(GameTime gameTime)
         {
-            CurrentKeyboardState = Keyboard.GetState();
+            InputHandler.Update(Keyboard.GetState(), Mouse.GetState());
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
-            if (CurrentKeyboardState.IsKeyDown(Keys.Escape))
+            if (InputHandler.IsKeyDown(Keys.Escape))
                 SceneManager.HideCurrentScene();
 
             SceneManager.Update(gameTime);

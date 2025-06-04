@@ -22,7 +22,7 @@ namespace NightfallBastion.World
             EntitiesFactory.CreateTileMap(
                 this,
                 Game.CoreSettings.DefaultMapWidth,
-                Game.CoreSettings.DefaultButtonHeight
+                Game.CoreSettings.DefaultMapHeight
             );
 
             EntitiesFactory.CreateEnemy(this, EnemyType.Boy, new Vector2(64, 64), 100.0f);
@@ -74,6 +74,69 @@ namespace NightfallBastion.World
         public bool IsInCameraView(Vector2 worldPosition) => Camera.IsInView(worldPosition);
 
         public void Update(GameTime gameTime) => ECSManager.Update(gameTime);
+
+        public void PlaceWall(Vector2 position)
+        {
+            if (position.X < 0 || position.Y < 0 || !IsInCameraView(position))
+                return;
+
+            var tileMapEntity = ECSManager
+                .GetEntitiesWithComponents<TileMapComp>()
+                .FirstOrDefault();
+
+            var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
+            var tilePosition = WorldToTile(position);
+
+            Console.WriteLine($"Placing wall at {tilePosition}");
+
+            if (
+                tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID == 0
+                && tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].floor
+                    != Floor.Space
+            )
+                EntitiesFactory.CreateWall(
+                    this,
+                    50,
+                    tilePosition * Game.CoreSettings.DefaultTileSize
+                );
+        }
+
+        public void DestroyWall(Vector2 position)
+        {
+            if (position.X < 0 || position.Y < 0 || !IsInCameraView(position))
+                return;
+
+            var tileMapEntity = ECSManager
+                .GetEntitiesWithComponents<TileMapComp>()
+                .FirstOrDefault();
+
+            var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
+            var tilePosition = WorldToTile(position);
+
+            Console.WriteLine($"Destroying wall at {tilePosition}");
+
+            var buildingEntity = ECSManager
+                .GetEntitiesWithComponents<BuildingComp>()
+                .Where(e =>
+                    WorldToTile(ECSManager.GetComponent<PositionComp>(e).position) == tilePosition
+                )
+                .FirstOrDefault();
+
+            if (buildingEntity != null)
+            {
+                ECSManager.DestroyEntity(buildingEntity);
+                tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID = 0;
+            }
+        }
+
+        public Vector2 WorldToTile(Vector2 worldPosition)
+        {
+            var tileSize = Game.CoreSettings.DefaultTileSize;
+            return new Vector2(
+                (int)(worldPosition.X / tileSize),
+                (int)(worldPosition.Y / tileSize)
+            );
+        }
 
         public RenderData GetRenderData()
         {
