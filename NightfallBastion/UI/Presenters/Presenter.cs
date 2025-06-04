@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -7,6 +8,8 @@ namespace NightfallBastion.UI
         protected readonly NightfallBastionGame _game = game;
 
         public virtual void RegisterEvents() { }
+
+        public virtual void Update(GameTime gameTime) { }
 
         public virtual void Dispose() { }
     }

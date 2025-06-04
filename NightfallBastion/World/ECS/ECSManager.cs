@@ -7,7 +7,7 @@ namespace NightfallBastion.World
 {
     public class ECSManager
     {
-        private int _nextEntityId = 0;
+        private int _nextEntityId = 1;
         private readonly List<Entity> _entities = [];
         private readonly List<System> _systems = [];
         private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = [];

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using NightfallBastion.Utilities;
 
 namespace NightfallBastion.World.ECS.Systems
 {
@@ -16,7 +17,7 @@ namespace NightfallBastion.World.ECS.Systems
             {
                 EntitiesFactory.CreateEnemy(
                     _world,
-                    EnemyType.boy,
+                    EnemyType.Boy,
                     new Vector2(
                         _world.Game.CoreSettings.DefaultTileSize * 2,
                         _world.Game.CoreSettings.DefaultTileSize * 2

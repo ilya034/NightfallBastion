@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI

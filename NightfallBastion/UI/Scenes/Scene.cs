@@ -21,7 +21,10 @@ namespace NightfallBastion.UI
             Presenter.RegisterEvents();
         }
 
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime)
+        {
+            Presenter?.Update(gameTime);
+        }
 
         public virtual void Dispose()
         {

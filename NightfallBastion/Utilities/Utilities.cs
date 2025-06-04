@@ -1,8 +1,15 @@
 using Microsoft.Xna.Framework;
+using NightfallBastion.World;
 using NightfallBastion.World.ECS.Components;
 
-namespace NightfallBastion.World
+namespace NightfallBastion.Utilities
 {
+    public static class UtilMethods
+    {
+        public static Rectangle GetDestinationRect(Vector2 position, int tileSize) =>
+            new Rectangle((int)position.X, (int)position.Y, tileSize, tileSize);
+    }
+
     public static class EntitiesFactory
     {
         public static Entity CreateTileMap(GameWorld world, int width, int height)
@@ -15,18 +22,12 @@ namespace NightfallBastion.World
                 {
                     tiles[x, y] = new TileData
                     {
-                        floor = Floor.defaultFloor,
+                        floor = Floor.DefaultFloor,
                         speedMultiplier = 1.0f,
                     };
 
                     if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
                     {
-                        tiles[x, y] = new TileData
-                        {
-                            floor = Floor.defaultFloor,
-                            speedMultiplier = 0.0f,
-                        };
-
                         var wallEntity = CreateWall(
                             world,
                             100.0f,
@@ -82,6 +83,10 @@ namespace NightfallBastion.World
                     ),
                 }
             );
+            world.ECSManager.AddComponent(
+                wallEntity,
+                new BuildingComp { type = BuildingType.Wall }
+            );
 
             return wallEntity;
         }
@@ -119,7 +124,7 @@ namespace NightfallBastion.World
                 enemyEntity,
                 new WeaponComp
                 {
-                    type = WeaponType.kamikaze,
+                    type = WeaponType.Kamikaze,
                     damage = 10.0f,
                     range = 1.0f,
                     cooldown = 0.0f,

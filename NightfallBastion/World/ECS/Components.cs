@@ -58,6 +58,11 @@ namespace NightfallBastion.World.ECS.Components
         public EnemyType type;
     }
 
+    public struct BuildingComp : IComponent
+    {
+        public BuildingType type;
+    }
+
     public struct DamageComp : IComponent
     {
         public float damage;

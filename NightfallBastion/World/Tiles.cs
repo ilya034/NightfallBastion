@@ -2,10 +2,10 @@ namespace NightfallBastion.World
 {
     public enum Floor
     {
-        space,
-        defaultFloor,
-        slowdownFloor,
-        damageFloor,
+        Space,
+        DefaultFloor,
+        SlowdownFloor,
+        DamageFloor,
     }
 
     public struct TileData

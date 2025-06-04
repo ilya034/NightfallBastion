@@ -37,11 +37,19 @@ namespace NightfallBastion.UI
 
         public void LoadContent()
         {
-            _scenes[Scenes.MainMenu] = Scene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(Game);
-            _scenes[Scenes.GameWorld] = Scene.Create<GameWorldScene, GameWorldPresenter, GameWorldView>(Game);
-            _scenes[Scenes.Settings] = Scene.Create<SettingsScene, SettingsPresenter, SettingsView>(Game);
+            _scenes[Scenes.MainMenu] = Scene.Create<MainMenuScene, MainMenuPresenter, MainMenuView>(
+                Game
+            );
+            _scenes[Scenes.GameWorld] = Scene.Create<
+                GameWorldScene,
+                GameWorldPresenter,
+                GameWorldView
+            >(Game);
+            _scenes[Scenes.Settings] = Scene.Create<SettingsScene, SettingsPresenter, SettingsView>(
+                Game
+            );
 
-            ShowScene(Scenes.MainMenu);
+            ShowScene(Scenes.GameWorld);
         }
 
         public void ShowScene(Scenes key)
@@ -73,10 +81,7 @@ namespace NightfallBastion.UI
         public void Draw()
         {
             var currentScene = _shownScenes.Count > 0 ? _shownScenes.Peek() : null;
-
-            if (currentScene is GameWorldScene gameWorldScene)
-                gameWorldScene.View.Draw();
-
+            currentScene?.View.Draw();
             _desktop.Root = currentScene?.View.RootElement;
             _desktop.Render();
         }
