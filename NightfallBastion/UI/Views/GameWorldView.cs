@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NightfallBastion.Core;
 using NightfallBastion.Utilities;
+using NightfallBastion.World;
 
 namespace NightfallBastion.UI
 {
@@ -25,13 +26,6 @@ namespace NightfallBastion.UI
             _mineTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.MineAssetName);
             _enemyTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.EnemyAssetName);
             _font = _game.Content.Load<SpriteFont>("Font");
-        }
-
-        public override void UnloadContent()
-        {
-            _tileTexture = null;
-            _enemyTexture = null;
-            _font = null;
         }
 
         public override void Draw()
@@ -76,20 +70,16 @@ namespace NightfallBastion.UI
 
             foreach (var entity in entityData)
             {
-                Color buildingColor = Color.White;
-                if (entity.MaxHealth > 0)
+                var texture = entity.type switch
                 {
-                    float healthRatio = entity.Health / entity.MaxHealth;
-                    if (healthRatio > 0.7f)
-                        buildingColor = Color.White;
-                    else if (healthRatio > 0.3f)
-                        buildingColor = Color.Yellow;
-                    else
-                        buildingColor = Color.Red;
-                }
+                    BuildingType.Wall => _wallTexture,
+                    BuildingType.StrongWall => _strongWallTexture,
+                    BuildingType.Mine => _mineTexture,
+                    _ => _tileTexture,
+                };
 
                 _game.SpriteBatch.Draw(
-                    _wallTexture,
+                    texture,
                     UtilMethods.GetDestinationRect(
                         entity.position,
                         _game.CoreSettings.DefaultTileSize

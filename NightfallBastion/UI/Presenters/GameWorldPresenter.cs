@@ -6,7 +6,6 @@ namespace NightfallBastion.UI
     public class GameWorldPresenter(NightfallBastionGame game, GameWorldView view) : Presenter(game)
     {
         private readonly GameWorldView _view = view;
-        private readonly InputHandler _inputHandler = new();
 
         public override void Update(GameTime gameTime)
         {
@@ -18,7 +17,7 @@ namespace NightfallBastion.UI
 
         private void HandleInput()
         {
-            var cameraInput = _inputHandler.HandleCameraInput();
+            var cameraInput = _game.InputHandler.HandleCameraInput();
 
             if (cameraInput.MovementDirection != Vector2.Zero)
             {
@@ -33,7 +32,7 @@ namespace NightfallBastion.UI
                 _game.GameWorld.Camera.ScaleZoom(zoomFactor);
             }
 
-            var gameplayInput = _inputHandler.HandleGameplayInput();
+            var gameplayInput = _game.InputHandler.HandleGameplayInput();
 
             if (gameplayInput.LeftMouseClicked && gameplayInput.MouseClickPosition.HasValue)
             {

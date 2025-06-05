@@ -12,6 +12,5 @@ namespace NightfallBastion.World
     {
         public Floor floor;
         public int BuildingID;
-        public float speedMultiplier;
     }
 }

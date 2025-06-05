@@ -30,12 +30,6 @@ namespace NightfallBastion.World
             AddSystems();
         }
 
-        public void Dispose()
-        {
-            ECSManager?.Dispose();
-            Camera = null;
-        }
-
         private void AddSystems()
         {
             ECSManager.AddSystem(new PathfindSystem(this));
@@ -86,19 +80,24 @@ namespace NightfallBastion.World
 
             var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
             var tilePosition = WorldToTile(position);
+            var tileX = (int)tilePosition.X;
+            var tileY = (int)tilePosition.Y;
+
+            if (
+                tileMapComp.tileMap[tileX, tileY].BuildingID != 0
+                || tileMapComp.tileMap[tileX, tileY].floor == Floor.Space
+            )
+                return;
 
             Console.WriteLine($"Placing wall at {tilePosition}");
 
-            if (
-                tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID == 0
-                && tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].floor
-                    != Floor.Space
-            )
-                EntitiesFactory.CreateWall(
+            tileMapComp.tileMap[tileX, tileY].BuildingID = EntitiesFactory
+                .CreateWall(
                     this,
-                    50,
+                    BuildingType.Wall,
                     tilePosition * Game.CoreSettings.DefaultTileSize
-                );
+                )
+                .Id;
         }
 
         public void DestroyWall(Vector2 position)
@@ -113,8 +112,6 @@ namespace NightfallBastion.World
             var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
             var tilePosition = WorldToTile(position);
 
-            Console.WriteLine($"Destroying wall at {tilePosition}");
-
             var buildingEntity = ECSManager
                 .GetEntitiesWithComponents<BuildingComp>()
                 .Where(e =>
@@ -124,6 +121,7 @@ namespace NightfallBastion.World
 
             if (buildingEntity != null)
             {
+                Console.WriteLine($"Destroying wall at {tilePosition}");
                 ECSManager.DestroyEntity(buildingEntity);
                 tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID = 0;
             }
