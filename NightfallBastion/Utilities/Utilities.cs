@@ -48,7 +48,38 @@ namespace NightfallBastion.Utilities
                     tileMap = tiles,
                 }
             );
+
             return tileMapEntity;
+        }
+
+        public static Entity CreatePlayerCore(GameWorld world, Vector2 position)
+        {
+            var playerCoreEntity = world.ECSManager.CreateEntity();
+
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new PositionComp { position = position }
+            );
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new HealthComp { maxHealth = 100.0f, currentHealth = 100.0f }
+            );
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new PhysicsComp
+                {
+                    mass = 1.0f,
+                    isSolid = true,
+                    hitbox = new Rectangle(
+                        0,
+                        0,
+                        world.Game.CoreSettings.DefaultTileSize,
+                        world.Game.CoreSettings.DefaultTileSize
+                    ),
+                }
+            );
+
+            return playerCoreEntity;
         }
 
         public static Entity CreateWall(
