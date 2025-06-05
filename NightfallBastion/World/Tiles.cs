@@ -1,3 +1,5 @@
+using NightfallBastion.World.ECS.Components;
+
 namespace NightfallBastion.World.Tiles;
 
 public struct TileData
@@ -5,13 +7,17 @@ public struct TileData
     public FloorType FloorType;
     public int BuildingID;
 
-    public float GetTileWalkCost()
+    public float GetTileWalkCost(GameWorld gameWorld)
     {
-        if (BuildingID > 0)
-            return float.MaxValue;
+        if (BuildingID == 0)
+            return Floors.Stats[FloorType].WalkCost;
 
-        return Floors.Stats[FloorType].WalkCost;
+        if (gameWorld.ECSManager.GetComponent<BuildingComp>(BuildingID).IsDestroyable)
+            return -1.0f;
+
+        return Floors.Stats[FloorType].WalkCost
+            + gameWorld.ECSManager.GetComponent<HealthComp>(BuildingID).CurrentHealth;
     }
 
-    public float GetTileSpeedMultiplayer() => 1 / GetTileWalkCost();
+    public float GetTileSpeedMultiplayer(GameWorld gameWorld) => 1 / GetTileWalkCost(gameWorld);
 }

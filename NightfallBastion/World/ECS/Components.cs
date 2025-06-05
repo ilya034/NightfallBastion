@@ -13,7 +13,7 @@ namespace NightfallBastion.World.ECS.Components
 
     public struct TilePositionComp : IComponent
     {
-        public Vector2 TilePosition;
+        public Vector2 Position;
     }
 
     public struct MovementComp : IComponent
@@ -23,9 +23,9 @@ namespace NightfallBastion.World.ECS.Components
         public float Speed;
     }
 
-    public struct MovementTargetComp : IComponent
+    public struct DistanceMapComp : IComponent
     {
-        public Vector2 Target;
+        public int[,] Distances;
     }
 
     public struct HealthComp : IComponent
@@ -62,7 +62,10 @@ namespace NightfallBastion.World.ECS.Components
     public struct BuildingComp : IComponent
     {
         public BuildingType Type;
+        public bool IsDestroyable;
     }
+
+    public struct CoreMarkComp : IComponent { }
 
     public struct DamageComp : IComponent
     {
@@ -77,22 +80,10 @@ namespace NightfallBastion.World.ECS.Components
         public TileData[,] TileMap;
     }
 
-    public struct PathfindingComp : IComponent
-    {
-        public List<Vector2> Path;
-        public Vector2 Target;
-    }
-
     public struct SpawnPointComp : IComponent
     {
         public Dictionary<EnemyType, float> EnemyTypes;
         public float SpawnInterval;
         public float Timer;
-    }
-
-    public struct NavigationMapComp : IComponent
-    {
-        public int[,] DistanceMap;
-        public bool IsDirty;
     }
 }

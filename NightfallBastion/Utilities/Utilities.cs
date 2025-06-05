@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using NightfallBastion.World;
 using NightfallBastion.World.ECS.Components;
+using NightfallBastion.World.Tiles;
 
 namespace NightfallBastion.Utilities
 {
@@ -12,7 +13,7 @@ namespace NightfallBastion.Utilities
 
     public static class EntitiesFactory
     {
-        public static Entity CreateTileMap(GameWorld world, int width, int height)
+        public static int CreateTileMap(GameWorld world, int width, int height)
         {
             var tiles = new TileData[width, height];
 
@@ -20,20 +21,25 @@ namespace NightfallBastion.Utilities
             {
                 for (int y = 0; y < height; y++)
                 {
-                    tiles[x, y] = new TileData { floor = FloorType.DefaultFloor };
+                    tiles[x, y] = new TileData { FloorType = FloorType.DefaultFloor };
 
                     if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
                     {
                         var wallEntity = CreateWall(
                             world,
                             BuildingType.StrongWall,
-                            new Vector2(
-                                x * world.Game.CoreSettings.DefaultTileSize,
-                                y * world.Game.CoreSettings.DefaultTileSize
-                            )
+                            new Vector2(x, y)
                         );
 
-                        tiles[x, y].BuildingID = wallEntity.Id;
+                        tiles[x, y].BuildingID = wallEntity;
+                    }
+                    else if (
+                        x == world.Game.CoreSettings.DefaultMapWidth / 2
+                        && y == world.Game.CoreSettings.DefaultMapHeight / 2
+                    )
+                    {
+                        var coreEntity = CreateCore(world, new Vector2(x, y));
+                        tiles[x, y].BuildingID = coreEntity;
                     }
                 }
             }
@@ -49,24 +55,20 @@ namespace NightfallBastion.Utilities
                 }
             );
 
-
             return tileMapEntity;
         }
 
-        public static Entity CreatePlayerCore(GameWorld world, Vector2 position)
+        public static int CreateCore(GameWorld world, Vector2 position)
         {
-            var playerCoreEntity = world.ECSManager.CreateEntity();
+            var coreEntity = world.ECSManager.CreateEntity();
 
+            world.ECSManager.AddComponent(coreEntity, new TilePositionComp { Position = position });
             world.ECSManager.AddComponent(
-                playerCoreEntity,
-                new PositionComp { Position = position }
-            );
-            world.ECSManager.AddComponent(
-                playerCoreEntity,
+                coreEntity,
                 new HealthComp { MaxHealth = 100.0f, CurrentHealth = 100.0f }
             );
             world.ECSManager.AddComponent(
-                playerCoreEntity,
+                coreEntity,
                 new PhysicsComp
                 {
                     Mass = 1.0f,
@@ -79,11 +81,16 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
+            world.ECSManager.AddComponent(
+                coreEntity,
+                new BuildingComp { Type = BuildingType.Core, IsDestroyable = true }
+            );
+            world.ECSManager.AddComponent(coreEntity, new CoreMarkComp());
 
-            return playerCoreEntity;
+            return coreEntity;
         }
 
-        public static Entity CreateWall(
+        public static int CreateWall(
             GameWorld world,
             BuildingType type,
             Vector2 position,
@@ -91,7 +98,7 @@ namespace NightfallBastion.Utilities
         )
         {
             if (type != BuildingType.Wall && type != BuildingType.StrongWall)
-                return null;
+                return 0;
 
             var maxHealth = type switch
             {
@@ -105,7 +112,7 @@ namespace NightfallBastion.Utilities
                 wallEntity,
                 new HealthComp { MaxHealth = maxHealth, CurrentHealth = maxHealth }
             );
-            world.ECSManager.AddComponent(wallEntity, new PositionComp { Position = position });
+            world.ECSManager.AddComponent(wallEntity, new TilePositionComp { Position = position });
             world.ECSManager.AddComponent(
                 wallEntity,
                 new PhysicsComp
@@ -120,12 +127,15 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
-            world.ECSManager.AddComponent(wallEntity, new BuildingComp { Type = type });
+            world.ECSManager.AddComponent(
+                wallEntity,
+                new BuildingComp { Type = type, IsDestroyable = true }
+            );
 
             return wallEntity;
         }
 
-        public static Entity CreateEnemy(
+        public static int CreateEnemy(
             GameWorld world,
             EnemyType type,
             Vector2 position,

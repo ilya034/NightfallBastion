@@ -8,42 +8,61 @@ namespace NightfallBastion.World
     public class ECSManager
     {
         private int _nextEntityId = 1;
-        private readonly List<Entity> _entities = [];
+        private readonly List<int> _entities = [];
         private readonly List<System> _systems = [];
-        private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = [];
+        private readonly Dictionary<Type, Dictionary<int, IComponent>> _components = [];
 
-        public Entity CreateEntity()
+        public int CreateEntity()
         {
-            var entity = new Entity(_nextEntityId++);
+            var entity = _nextEntityId++;
             _entities.Add(entity);
             return entity;
         }
 
-        public void DestroyEntity(Entity entity)
+        public void DestroyEntity(int entity)
         {
             if (_entities.Remove(entity))
                 foreach (var component in _components)
                     component.Value.Remove(entity);
         }
 
-        public void AddComponent<T>(Entity entity, T component)
+        public List<IComponent> GetEntityComponents(int entity)
+        {
+            var components = new List<IComponent>();
+            foreach (var component in _components)
+            {
+                if (component.Value.TryGetValue(entity, out var comp))
+                    components.Add(comp);
+            }
+
+            return components;
+        }
+
+        public void AddComponent<T>(int entity, T component)
             where T : IComponent
         {
             var type = typeof(T);
             if (!_components.ContainsKey(type))
-                _components[type] = new Dictionary<Entity, IComponent>();
+                _components[type] = new Dictionary<int, IComponent>();
 
             _components[type][entity] = component;
         }
 
-        public void RemoveComponent<T>(Entity entity)
+        public void RemoveComponent<T>(int entity)
             where T : IComponent
         {
             if (_components.TryGetValue(typeof(T), out var entityComponents))
                 entityComponents.Remove(entity);
         }
 
-        public T? GetComponent<T>(Entity entity)
+        public bool HasComponent<T>(int entity)
+            where T : IComponent
+        {
+            return _components.TryGetValue(typeof(T), out var entityComponents)
+                && entityComponents.ContainsKey(entity);
+        }
+
+        public T? GetComponent<T>(int entity)
             where T : IComponent
         {
             if (
@@ -55,17 +74,33 @@ namespace NightfallBastion.World
             return default;
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents(params Type[] componentTypes)
+        public bool TryGetComponent<T>(int entity, out T component)
+            where T : IComponent
+        {
+            if (
+                _components.TryGetValue(typeof(T), out var entityComponents)
+                && entityComponents.TryGetValue(entity, out var comp)
+            )
+            {
+                component = (T)comp;
+                return true;
+            }
+
+            component = default!;
+            return false;
+        }
+
+        public IEnumerable<int> GetEntitiesWithComponents(params Type[] componentTypes)
         {
             if (componentTypes == null || componentTypes.Length == 0)
                 yield break;
 
-            List<HashSet<Entity>> entitySets = new();
+            List<HashSet<int>> entitySets = new();
             foreach (var type in componentTypes)
             {
                 if (!_components.TryGetValue(type, out var components))
                     yield break;
-                entitySets.Add(new HashSet<Entity>(components.Keys));
+                entitySets.Add(new HashSet<int>(components.Keys));
             }
 
             var intersection = entitySets[0];
@@ -76,20 +111,20 @@ namespace NightfallBastion.World
                 yield return entity;
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1>()
+        public IEnumerable<int> GetEntitiesWithComponents<T1>()
             where T1 : IComponent
         {
             return GetEntitiesWithComponents(typeof(T1));
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2>()
+        public IEnumerable<int> GetEntitiesWithComponents<T1, T2>()
             where T1 : IComponent
             where T2 : IComponent
         {
             return GetEntitiesWithComponents(typeof(T1), typeof(T2));
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3>()
+        public IEnumerable<int> GetEntitiesWithComponents<T1, T2, T3>()
             where T1 : IComponent
             where T2 : IComponent
             where T3 : IComponent
@@ -97,7 +132,7 @@ namespace NightfallBastion.World
             return GetEntitiesWithComponents(typeof(T1), typeof(T2), typeof(T3));
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3, T4>()
+        public IEnumerable<int> GetEntitiesWithComponents<T1, T2, T3, T4>()
             where T1 : IComponent
             where T2 : IComponent
             where T3 : IComponent
@@ -106,7 +141,7 @@ namespace NightfallBastion.World
             return GetEntitiesWithComponents(typeof(T1), typeof(T2), typeof(T3), typeof(T4));
         }
 
-        public IEnumerable<Entity> GetEntitiesWithComponents<T1, T2, T3, T4, T5>()
+        public IEnumerable<int> GetEntitiesWithComponents<T1, T2, T3, T4, T5>()
             where T1 : IComponent
             where T2 : IComponent
             where T3 : IComponent
@@ -122,7 +157,7 @@ namespace NightfallBastion.World
             );
         }
 
-        public void RemoveEntity(Entity entity) => DestroyEntity(entity);
+        public void RemoveEntity(int entity) => DestroyEntity(entity);
 
         public void AddSystem(System system) => _systems.Add(system);
 

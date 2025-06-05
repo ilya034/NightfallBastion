@@ -32,7 +32,7 @@ namespace NightfallBastion.World
 
         private void AddSystems()
         {
-            ECSManager.AddSystem(new PathfindSystem(this));
+            ECSManager.AddSystem(new DistanceMapSystem(this));
             ECSManager.AddSystem(new MovementSystem(this));
             ECSManager.AddSystem(new PhysicsSystem(this));
             ECSManager.AddSystem(new WeaponSystem(this));
@@ -91,13 +91,11 @@ namespace NightfallBastion.World
 
             Console.WriteLine($"Placing wall at {tilePosition}");
 
-            tileMapComp.TileMap[tileX, tileY].BuildingID = EntitiesFactory
-                .CreateWall(
-                    this,
-                    BuildingType.Wall,
-                    tilePosition * Game.CoreSettings.DefaultTileSize
-                )
-                .Id;
+            tileMapComp.TileMap[tileX, tileY].BuildingID = EntitiesFactory.CreateWall(
+                this,
+                BuildingType.Wall,
+                tilePosition
+            );
         }
 
         public void DestroyWall(Vector2 position)
@@ -114,12 +112,10 @@ namespace NightfallBastion.World
 
             var buildingEntity = ECSManager
                 .GetEntitiesWithComponents<BuildingComp>()
-                .Where(e =>
-                    WorldToTile(ECSManager.GetComponent<PositionComp>(e).Position) == tilePosition
-                )
+                .Where(e => ECSManager.GetComponent<TilePositionComp>(e).Position == tilePosition)
                 .FirstOrDefault();
 
-            if (buildingEntity != null)
+            if (buildingEntity != 0)
             {
                 Console.WriteLine($"Destroying wall at {tilePosition}");
                 ECSManager.DestroyEntity(buildingEntity);
@@ -156,7 +152,7 @@ namespace NightfallBastion.World
                 .FirstOrDefault();
 
             if (tileMapEntity == null)
-                throw new InvalidOperationException("TileMap entity not found in ECSManager.");
+                throw new InvalidOperationException("TileMapComp not found in ECSManager.");
 
             var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
 
@@ -185,22 +181,25 @@ namespace NightfallBastion.World
         {
             var buildingsRenderData = new List<BuildingRenderData>();
 
-            var buildingEntities = ECSManager.GetEntitiesWithComponents<
-                BuildingComp,
-                PositionComp,
-                HealthComp
-            >();
+            var buildingEntities = ECSManager.GetEntitiesWithComponents<BuildingComp, HealthComp>();
 
             foreach (var buildingEntity in buildingEntities)
             {
-                var positionComp = ECSManager.GetComponent<PositionComp>(buildingEntity);
                 var healthComp = ECSManager.GetComponent<HealthComp>(buildingEntity);
                 var buildingComp = ECSManager.GetComponent<BuildingComp>(buildingEntity);
+
+                Vector2 position;
+                if (ECSManager.TryGetComponent<PositionComp>(buildingEntity, out var positionComp))
+                    position = positionComp.Position;
+                else
+                    position =
+                        ECSManager.GetComponent<TilePositionComp>(buildingEntity).Position
+                        * Game.CoreSettings.DefaultTileSize;
 
                 var renderEntity = new BuildingRenderData
                 {
                     type = buildingComp.Type,
-                    position = positionComp.Position,
+                    position = position,
                     Health = healthComp.CurrentHealth,
                     MaxHealth = healthComp.MaxHealth,
                 };
