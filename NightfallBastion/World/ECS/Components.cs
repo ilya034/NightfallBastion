@@ -25,7 +25,7 @@ namespace NightfallBastion.World.ECS.Components
 
     public struct DistanceMapComp : IComponent
     {
-        public int[,] Distances;
+        public float[,] Distances;
     }
 
     public struct HealthComp : IComponent

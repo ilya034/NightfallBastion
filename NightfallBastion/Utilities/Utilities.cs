@@ -54,6 +54,10 @@ namespace NightfallBastion.Utilities
                     TileMap = tiles,
                 }
             );
+            world.ECSManager.AddComponent(
+                tileMapEntity,
+                new DistanceMapComp { Distances = new float[width, height] }
+            );
 
             return tileMapEntity;
         }
@@ -146,6 +150,10 @@ namespace NightfallBastion.Utilities
             var enemyEntity = world.ECSManager.CreateEntity();
             world.ECSManager.AddComponent(enemyEntity, new EnemyComp { Type = type });
             world.ECSManager.AddComponent(enemyEntity, new PositionComp { Position = position });
+            world.ECSManager.AddComponent(
+                enemyEntity,
+                new MovementComp { Speed = 25f, IsMoving = true }
+            );
             world.ECSManager.AddComponent(
                 enemyEntity,
                 new HealthComp { MaxHealth = maxHealth, CurrentHealth = maxHealth }

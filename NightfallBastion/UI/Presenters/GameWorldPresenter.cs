@@ -32,20 +32,18 @@ namespace NightfallBastion.UI
                 _game.GameWorld.Camera.ScaleZoom(zoomFactor);
             }
 
-            var gameplayInput = _game.InputHandler.HandleGameplayInput();
-
-            if (gameplayInput.LeftMouseClicked && gameplayInput.MouseClickPosition.HasValue)
+            if (_game.InputHandler.IsLeftMouseButtonDown())
             {
-                var worldPosition = _game.GameWorld.ScreenToWorld(
-                    gameplayInput.MouseClickPosition.Value
+                var worldPosition = _game.GameWorld.Camera.ScreenToWorld(
+                    _game.InputHandler.GetMousePosition()
                 );
                 HandleLeftClick(worldPosition);
             }
 
-            if (gameplayInput.RightMouseClicked && gameplayInput.MouseClickPosition.HasValue)
+            if (_game.InputHandler.IsRightMouseButtonDown())
             {
                 var worldPosition = _game.GameWorld.ScreenToWorld(
-                    gameplayInput.MouseClickPosition.Value
+                    _game.InputHandler.GetMousePosition()
                 );
                 HandleRightClick(worldPosition);
             }

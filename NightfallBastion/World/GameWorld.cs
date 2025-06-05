@@ -36,6 +36,7 @@ namespace NightfallBastion.World
             ECSManager.AddSystem(new MovementSystem(this));
             ECSManager.AddSystem(new PhysicsSystem(this));
             ECSManager.AddSystem(new WeaponSystem(this));
+            ECSManager.AddSystem(new EnemySpawnSystem(this));
         }
 
         private void CreateCamera()
@@ -71,7 +72,7 @@ namespace NightfallBastion.World
 
         public void PlaceWall(Vector2 position)
         {
-            if (position.X < 0 || position.Y < 0 || !IsInCameraView(position))
+            if (!IsInWorld(position))
                 return;
 
             var tileMapEntity = ECSManager
@@ -100,7 +101,7 @@ namespace NightfallBastion.World
 
         public void DestroyWall(Vector2 position)
         {
-            if (position.X < 0 || position.Y < 0 || !IsInCameraView(position))
+            if (!IsInWorld(position))
                 return;
 
             var tileMapEntity = ECSManager
@@ -123,6 +124,21 @@ namespace NightfallBastion.World
             }
         }
 
+        public bool IsInWorld(Vector2 position)
+        {
+            var tileSize = Game.CoreSettings.DefaultTileSize;
+            return position.X >= 0
+                && position.Y >= 0
+                && position.X < tileSize * Game.CoreSettings.DefaultMapWidth
+                && position.Y < tileSize * Game.CoreSettings.DefaultMapHeight;
+        }
+
+        public Vector2 TileToWorld(Vector2 tilePosition)
+        {
+            var tileSize = Game.CoreSettings.DefaultTileSize;
+            return new Vector2(tilePosition.X * tileSize, tilePosition.Y * tileSize);
+        }
+
         public Vector2 WorldToTile(Vector2 worldPosition)
         {
             var tileSize = Game.CoreSettings.DefaultTileSize;
@@ -136,10 +152,10 @@ namespace NightfallBastion.World
         {
             var renderData = new RenderData
             {
-                cameraTransform = GetCameraTransformMatrix(),
-                tileMapData = GetTileMapRenderData(),
-                buildingData = GetBuildingRenderData(),
-                enemyData = GetEnemyRenderData(),
+                CameraTransform = GetCameraTransformMatrix(),
+                TileMapData = GetTileMapRenderData(),
+                BuildingData = GetBuildingRenderData(),
+                EnemyData = GetEnemyRenderData(),
             };
 
             return renderData;
@@ -155,6 +171,7 @@ namespace NightfallBastion.World
                 throw new InvalidOperationException("TileMapComp not found in ECSManager.");
 
             var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
+            var distanceMapComp = ECSManager.GetComponent<DistanceMapComp>(tileMapEntity);
 
             var tiles = new TileRenderData[tileMapComp.Width, tileMapComp.Height];
 
@@ -164,16 +181,20 @@ namespace NightfallBastion.World
                 {
                     var tileData = tileMapComp.TileMap[x, y];
 
-                    var floorTile = new TileRenderData { floor = tileData.FloorType };
+                    var floorTile = new TileRenderData
+                    {
+                        FloorType = tileData.FloorType,
+                        Distance = distanceMapComp.Distances[x, y],
+                    };
                     tiles[x, y] = floorTile;
                 }
             }
 
             return new TileMapRenderData
             {
-                tiles = tiles,
-                width = tileMapComp.Width,
-                height = tileMapComp.Height,
+                Tiles = tiles,
+                Width = tileMapComp.Width,
+                Height = tileMapComp.Height,
             };
         }
 
@@ -198,8 +219,8 @@ namespace NightfallBastion.World
 
                 var renderEntity = new BuildingRenderData
                 {
-                    type = buildingComp.Type,
-                    position = position,
+                    Type = buildingComp.Type,
+                    Position = position,
                     Health = healthComp.CurrentHealth,
                     MaxHealth = healthComp.MaxHealth,
                 };
@@ -228,10 +249,10 @@ namespace NightfallBastion.World
 
                 var renderEntity = new EnemyRenderData
                 {
-                    type = enemyComp.Type,
-                    position = positionComp.Position,
-                    health = healthComp.CurrentHealth,
-                    maxHealth = healthComp.MaxHealth,
+                    Type = enemyComp.Type,
+                    Position = positionComp.Position,
+                    Health = healthComp.CurrentHealth,
+                    MaxHealth = healthComp.MaxHealth,
                 };
                 entitiesRenderData.Add(renderEntity);
             }

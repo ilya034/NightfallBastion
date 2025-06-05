@@ -9,19 +9,6 @@ namespace NightfallBastion.UI
         public float ZoomDelta { get; set; } = zoomDelta;
     }
 
-    public struct GameplayInputData(
-        Vector2? mouseClickPosition,
-        bool leftMouseClicked,
-        bool rightMouseClicked,
-        Vector2 mousePosition
-    )
-    {
-        public Vector2? MouseClickPosition { get; set; } = mouseClickPosition;
-        public bool LeftMouseClicked { get; set; } = leftMouseClicked;
-        public bool RightMouseClicked { get; set; } = rightMouseClicked;
-        public Vector2 MousePosition { get; set; } = mousePosition;
-    }
-
     public class InputHandler
     {
         private MouseState _currentMouseState;
@@ -63,41 +50,6 @@ namespace NightfallBastion.UI
             return new CameraInputData(movementDirection, zoomDelta);
         }
 
-        public GameplayInputData HandleGameplayInput()
-        {
-            Vector2? mouseClickPosition = null;
-            bool leftMouseClicked = false;
-            bool rightMouseClicked = false;
-
-            if (
-                _currentMouseState.LeftButton == ButtonState.Pressed
-                && _previousMouseState.LeftButton == ButtonState.Released
-            )
-            {
-                leftMouseClicked = true;
-                mouseClickPosition = new Vector2(_currentMouseState.X, _currentMouseState.Y);
-            }
-
-            if (
-                _currentMouseState.RightButton == ButtonState.Pressed
-                && _previousMouseState.RightButton == ButtonState.Released
-            )
-            {
-                rightMouseClicked = true;
-                if (!mouseClickPosition.HasValue)
-                    mouseClickPosition = new Vector2(_currentMouseState.X, _currentMouseState.Y);
-            }
-
-            var mousePosition = new Vector2(_currentMouseState.X, _currentMouseState.Y);
-
-            return new GameplayInputData(
-                mouseClickPosition,
-                leftMouseClicked,
-                rightMouseClicked,
-                mousePosition
-            );
-        }
-
         public void Update(KeyboardState keyboardState, MouseState mouseState)
         {
             _previousKeyboardState = _currentKeyboardState;
@@ -106,6 +58,15 @@ namespace NightfallBastion.UI
             _currentKeyboardState = keyboardState;
             _currentMouseState = mouseState;
         }
+
+        public Vector2 GetMousePosition() =>
+            new Vector2(_currentMouseState.X, _currentMouseState.Y);
+
+        public bool IsLeftMouseButtonDown() =>
+            _currentMouseState.LeftButton == ButtonState.Pressed;
+
+        public bool IsRightMouseButtonDown() =>
+            _currentMouseState.RightButton == ButtonState.Pressed;
 
         public bool IsKeyDown(Keys key) => _currentKeyboardState.IsKeyDown(key);
 

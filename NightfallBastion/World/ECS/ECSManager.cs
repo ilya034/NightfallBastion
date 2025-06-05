@@ -48,6 +48,15 @@ namespace NightfallBastion.World
             _components[type][entity] = component;
         }
 
+        public void SetComponent<T>(int entity, T component)
+            where T : IComponent
+        {
+            if (_components.TryGetValue(typeof(T), out var entityComponents))
+                entityComponents[entity] = component;
+            else
+                _components[typeof(T)] = new Dictionary<int, IComponent> { [entity] = component };
+        }
+
         public void RemoveComponent<T>(int entity)
             where T : IComponent
         {

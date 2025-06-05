@@ -5,37 +5,38 @@ namespace NightfallBastion.Core
 {
     public struct RenderData
     {
-        public Matrix cameraTransform;
-        public TileMapRenderData tileMapData;
-        public BuildingRenderData[] buildingData;
-        public EnemyRenderData[] enemyData;
+        public Matrix CameraTransform;
+        public TileMapRenderData TileMapData;
+        public BuildingRenderData[] BuildingData;
+        public EnemyRenderData[] EnemyData;
     }
 
     public struct TileMapRenderData
     {
-        public TileRenderData[,] tiles;
-        public int width;
-        public int height;
+        public TileRenderData[,] Tiles;
+        public int Width;
+        public int Height;
     }
 
     public struct TileRenderData
     {
-        public FloorType floor;
+        public FloorType FloorType;
+        public float Distance;
     }
 
     public struct BuildingRenderData
     {
-        public BuildingType type;
-        public Vector2 position;
+        public BuildingType Type;
+        public Vector2 Position;
         public float Health;
         public float MaxHealth;
     }
 
     public struct EnemyRenderData
     {
-        public EnemyType type;
-        public Vector2 position;
-        public float health;
-        public float maxHealth;
+        public EnemyType Type;
+        public Vector2 Position;
+        public float Health;
+        public float MaxHealth;
     }
 }

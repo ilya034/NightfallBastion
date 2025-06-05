@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using NightfallBastion.World.ECS.Components;
 
@@ -10,32 +11,87 @@ namespace NightfallBastion.World
         {
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var entities = _world.ECSManager.GetEntitiesWithComponents<
+            var distanceMapEntity = _world
+                .ECSManager.GetEntitiesWithComponents<DistanceMapComp>()
+                .FirstOrDefault();
+
+            var distanceMapComp = _world.ECSManager.GetComponent<DistanceMapComp>(
+                distanceMapEntity
+            );
+            var distanceMap = distanceMapComp.Distances;
+
+            var enemies = _world.ECSManager.GetEntitiesWithComponents<
+                EnemyComp,
                 PositionComp,
                 MovementComp
             >();
 
-            foreach (var entity in entities)
+            int[] dx = [0, 0, -1, 1];
+            int[] dy = [-1, 1, 0, 0];
+
+            foreach (var enemy in enemies)
             {
-                var position = _world.ECSManager.GetComponent<PositionComp>(entity);
-                var movement = _world.ECSManager.GetComponent<MovementComp>(entity);
+                var positionComp = _world.ECSManager.GetComponent<PositionComp>(enemy);
+                var movementComp = _world.ECSManager.GetComponent<MovementComp>(enemy);
 
-                if (_world.ECSManager.GetComponent<HealthComp>(entity).CurrentHealth <= 0)
+                var position = positionComp.Position;
+                var tilePosition = _world.WorldToTile(position);
+                var tileX = (int)tilePosition.X;
+                var tileY = (int)tilePosition.Y;
+
+                if (distanceMap[tileX, tileY] == 0)
                     continue;
 
-                if (!movement.IsMoving)
-                    continue;
-
-                if ((movement.NextPosition - position.Position).Length() < 0.01f)
+                if (!movementComp.IsMoving)
                 {
-                    position.Position = movement.NextPosition;
-                    movement.IsMoving = false;
+                    var bestDistance = distanceMap[tileX, tileY];
+                    var bestX = tileX;
+                    var bestY = tileY;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var newX = tileX + dx[i];
+                        var newY = tileY + dy[i];
+
+                        if (
+                            newX < 0
+                            || newX >= distanceMap.GetLength(0)
+                            || newY < 0
+                            || newY >= distanceMap.GetLength(1)
+                        )
+                            continue;
+
+                        var newDistance = distanceMap[newX, newY];
+                        if (newDistance < bestDistance)
+                        {
+                            bestDistance = newDistance;
+                            bestX = newX;
+                            bestY = newY;
+                        }
+
+                        if (bestX != tileX || bestY != tileY)
+                        {
+                            movementComp.NextPosition =
+                                new Vector2(bestX, bestY)
+                                * _world.Game.CoreSettings.DefaultTileSize;
+                            movementComp.IsMoving = true;
+                        }
+                    }
+                }
+
+                var target = movementComp.NextPosition;
+                var direction = target - position;
+                if (direction.Length() < 0.01f)
+                {
+                    movementComp.IsMoving = false;
                     continue;
                 }
 
-                var direction = movement.NextPosition - position.Position;
                 direction.Normalize();
-                position.Position += direction * movement.Speed * deltaTime;
+                var delta = -direction * movementComp.Speed * deltaTime;
+                positionComp.Position += delta;
+
+                _world.ECSManager.SetComponent(enemy, positionComp);
+                _world.ECSManager.SetComponent(enemy, movementComp);
             }
         }
     }

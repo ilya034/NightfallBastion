@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NightfallBastion.Core;
@@ -12,6 +13,7 @@ namespace NightfallBastion.UI
         private Texture2D? _enemyTexture;
         private Texture2D? _wallTexture;
         private Texture2D? _strongWallTexture;
+
         // private Texture2D _coreTexture;
         private Texture2D? _mineTexture;
         private SpriteFont? _font;
@@ -32,7 +34,7 @@ namespace NightfallBastion.UI
 
         public override void Draw()
         {
-            _game.SpriteBatch.Begin(transformMatrix: _renderData.cameraTransform);
+            _game.SpriteBatch.Begin(transformMatrix: _renderData.CameraTransform);
 
             RenderTileMap();
             RenderBuildings();
@@ -45,16 +47,16 @@ namespace NightfallBastion.UI
 
         public void RenderTileMap()
         {
-            var tileMapData = _renderData.tileMapData;
+            var tileMapData = _renderData.TileMapData;
 
-            if (tileMapData.tiles == null)
+            if (tileMapData.Tiles == null)
                 return;
 
-            for (int x = 0; x < tileMapData.width; x++)
+            for (int x = 0; x < tileMapData.Width; x++)
             {
-                for (int y = 0; y < tileMapData.height; y++)
+                for (int y = 0; y < tileMapData.Height; y++)
                 {
-                    var tile = tileMapData.tiles[x, y];
+                    var tile = tileMapData.Tiles[x, y];
 
                     var position = new Vector2(
                         x * _game.CoreSettings.DefaultTileSize,
@@ -62,17 +64,25 @@ namespace NightfallBastion.UI
                     );
 
                     _game.SpriteBatch.Draw(_tileTexture, position, Color.DimGray);
+
+                    string distance;
+                    if (tile.Distance == float.PositiveInfinity)
+                        distance = "Inf";
+                    else
+                        distance = tile.Distance.ToString();
+
+                    _game.SpriteBatch.DrawString(_font, distance, position, Color.White);
                 }
             }
         }
 
         public void RenderBuildings()
         {
-            var entityData = _renderData.buildingData;
+            var entityData = _renderData.BuildingData;
 
             foreach (var entity in entityData)
             {
-                var texture = entity.type switch
+                var texture = entity.Type switch
                 {
                     BuildingType.Wall => _wallTexture,
                     BuildingType.StrongWall => _strongWallTexture,
@@ -84,7 +94,7 @@ namespace NightfallBastion.UI
                 _game.SpriteBatch.Draw(
                     texture,
                     UtilMethods.GetDestinationRect(
-                        entity.position,
+                        entity.Position,
                         _game.CoreSettings.DefaultTileSize
                     ),
                     _game.CoreSettings.DefaultTextureRectangle,
@@ -98,14 +108,14 @@ namespace NightfallBastion.UI
 
         public void RenderEnemies()
         {
-            var entityData = _renderData.enemyData;
+            var entityData = _renderData.EnemyData;
 
             foreach (var entity in entityData)
             {
                 Color entityColor = Color.White;
-                if (entity.maxHealth > 0)
+                if (entity.MaxHealth > 0)
                 {
-                    float healthRatio = entity.health / entity.maxHealth;
+                    float healthRatio = entity.Health / entity.MaxHealth;
                     if (healthRatio > 0.7f)
                         entityColor = Color.White;
                     else if (healthRatio > 0.3f)
@@ -117,11 +127,11 @@ namespace NightfallBastion.UI
                 _game.SpriteBatch.Draw(
                     _enemyTexture,
                     UtilMethods.GetDestinationRect(
-                        entity.position,
-                        _game.CoreSettings.DefaultTileSize
+                        entity.Position,
+                        _game.CoreSettings.DefaultTileSize * 2
                     ),
                     _game.CoreSettings.DefaultTextureRectangle,
-                    Color.DimGray
+                    Color.White
                 );
 
                 // if (_showHealthDisplay && entity.maxHealth > 0)
