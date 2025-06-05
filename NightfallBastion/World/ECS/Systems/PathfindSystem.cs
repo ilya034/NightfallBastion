@@ -9,7 +9,6 @@ namespace NightfallBastion.World.ECS.Systems
         {
             var entities = _world.ECSManager.GetEntitiesWithComponents<
                 PositionComp,
-                TilePositionComp,
                 PathfindingComp
             >();
         }

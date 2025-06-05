@@ -21,7 +21,7 @@ namespace NightfallBastion.World.ECS.Systems
                 var weapon = _world.ECSManager.GetComponent<WeaponComp>(entity);
                 var team = _world.ECSManager.GetComponent<TeamComp>(entity);
 
-                if (_world.ECSManager.GetComponent<HealthComp>(entity).currentHealth <= 0)
+                if (_world.ECSManager.GetComponent<HealthComp>(entity).CurrentHealth <= 0)
                     continue;
             }
         }

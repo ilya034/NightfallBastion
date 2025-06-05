@@ -20,7 +20,7 @@ namespace NightfallBastion.Core
 
     public struct TileRenderData
     {
-        public Floor floor;
+        public FloorType floor;
     }
 
     public struct BuildingRenderData

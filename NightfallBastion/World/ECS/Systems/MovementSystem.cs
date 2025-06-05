@@ -20,22 +20,22 @@ namespace NightfallBastion.World
                 var position = _world.ECSManager.GetComponent<PositionComp>(entity);
                 var movement = _world.ECSManager.GetComponent<MovementComp>(entity);
 
-                if (_world.ECSManager.GetComponent<HealthComp>(entity).currentHealth <= 0)
+                if (_world.ECSManager.GetComponent<HealthComp>(entity).CurrentHealth <= 0)
                     continue;
 
-                if (!movement.isMoving)
+                if (!movement.IsMoving)
                     continue;
 
-                if ((movement.nextPosition - position.position).Length() < 0.01f)
+                if ((movement.NextPosition - position.Position).Length() < 0.01f)
                 {
-                    position.position = movement.nextPosition;
-                    movement.isMoving = false;
+                    position.Position = movement.NextPosition;
+                    movement.IsMoving = false;
                     continue;
                 }
 
-                var direction = movement.nextPosition - position.position;
+                var direction = movement.NextPosition - position.Position;
                 direction.Normalize();
-                position.position += direction * movement.speed * deltaTime;
+                position.Position += direction * movement.Speed * deltaTime;
             }
         }
     }

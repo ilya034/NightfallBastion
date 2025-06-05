@@ -84,14 +84,14 @@ namespace NightfallBastion.World
             var tileY = (int)tilePosition.Y;
 
             if (
-                tileMapComp.tileMap[tileX, tileY].BuildingID != 0
-                || tileMapComp.tileMap[tileX, tileY].floor == Floor.Space
+                tileMapComp.TileMap[tileX, tileY].BuildingID != 0
+                || tileMapComp.TileMap[tileX, tileY].FloorType == FloorType.Space
             )
                 return;
 
             Console.WriteLine($"Placing wall at {tilePosition}");
 
-            tileMapComp.tileMap[tileX, tileY].BuildingID = EntitiesFactory
+            tileMapComp.TileMap[tileX, tileY].BuildingID = EntitiesFactory
                 .CreateWall(
                     this,
                     BuildingType.Wall,
@@ -115,7 +115,7 @@ namespace NightfallBastion.World
             var buildingEntity = ECSManager
                 .GetEntitiesWithComponents<BuildingComp>()
                 .Where(e =>
-                    WorldToTile(ECSManager.GetComponent<PositionComp>(e).position) == tilePosition
+                    WorldToTile(ECSManager.GetComponent<PositionComp>(e).Position) == tilePosition
                 )
                 .FirstOrDefault();
 
@@ -123,7 +123,7 @@ namespace NightfallBastion.World
             {
                 Console.WriteLine($"Destroying wall at {tilePosition}");
                 ECSManager.DestroyEntity(buildingEntity);
-                tileMapComp.tileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID = 0;
+                tileMapComp.TileMap[(int)tilePosition.X, (int)tilePosition.Y].BuildingID = 0;
             }
         }
 
@@ -160,15 +160,15 @@ namespace NightfallBastion.World
 
             var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
 
-            var tiles = new TileRenderData[tileMapComp.width, tileMapComp.height];
+            var tiles = new TileRenderData[tileMapComp.Width, tileMapComp.Height];
 
-            for (int x = 0; x < tileMapComp.width; x++)
+            for (int x = 0; x < tileMapComp.Width; x++)
             {
-                for (int y = 0; y < tileMapComp.height; y++)
+                for (int y = 0; y < tileMapComp.Height; y++)
                 {
-                    var tileData = tileMapComp.tileMap[x, y];
+                    var tileData = tileMapComp.TileMap[x, y];
 
-                    var floorTile = new TileRenderData { floor = tileData.floor };
+                    var floorTile = new TileRenderData { floor = tileData.FloorType };
                     tiles[x, y] = floorTile;
                 }
             }
@@ -176,8 +176,8 @@ namespace NightfallBastion.World
             return new TileMapRenderData
             {
                 tiles = tiles,
-                width = tileMapComp.width,
-                height = tileMapComp.height,
+                width = tileMapComp.Width,
+                height = tileMapComp.Height,
             };
         }
 
@@ -199,10 +199,10 @@ namespace NightfallBastion.World
 
                 var renderEntity = new BuildingRenderData
                 {
-                    type = buildingComp.type,
-                    position = positionComp.position,
-                    Health = healthComp.currentHealth,
-                    MaxHealth = healthComp.maxHealth,
+                    type = buildingComp.Type,
+                    position = positionComp.Position,
+                    Health = healthComp.CurrentHealth,
+                    MaxHealth = healthComp.MaxHealth,
                 };
 
                 buildingsRenderData.Add(renderEntity);
@@ -229,10 +229,10 @@ namespace NightfallBastion.World
 
                 var renderEntity = new EnemyRenderData
                 {
-                    type = enemyComp.type,
-                    position = positionComp.position,
-                    health = healthComp.currentHealth,
-                    maxHealth = healthComp.maxHealth,
+                    type = enemyComp.Type,
+                    position = positionComp.Position,
+                    health = healthComp.CurrentHealth,
+                    maxHealth = healthComp.MaxHealth,
                 };
                 entitiesRenderData.Add(renderEntity);
             }

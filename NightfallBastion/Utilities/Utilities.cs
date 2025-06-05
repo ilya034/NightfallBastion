@@ -20,7 +20,7 @@ namespace NightfallBastion.Utilities
             {
                 for (int y = 0; y < height; y++)
                 {
-                    tiles[x, y] = new TileData { floor = Floor.DefaultFloor };
+                    tiles[x, y] = new TileData { floor = FloorType.DefaultFloor };
 
                     if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
                     {
@@ -43,12 +43,43 @@ namespace NightfallBastion.Utilities
                 tileMapEntity,
                 new TileMapComp
                 {
-                    width = width,
-                    height = height,
-                    tileMap = tiles,
+                    Width = width,
+                    Height = height,
+                    TileMap = tiles,
                 }
             );
+
             return tileMapEntity;
+        }
+
+        public static Entity CreatePlayerCore(GameWorld world, Vector2 position)
+        {
+            var playerCoreEntity = world.ECSManager.CreateEntity();
+
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new PositionComp { Position = position }
+            );
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new HealthComp { MaxHealth = 100.0f, CurrentHealth = 100.0f }
+            );
+            world.ECSManager.AddComponent(
+                playerCoreEntity,
+                new PhysicsComp
+                {
+                    Mass = 1.0f,
+                    IsSolid = true,
+                    Hitbox = new Rectangle(
+                        0,
+                        0,
+                        world.Game.CoreSettings.DefaultTileSize,
+                        world.Game.CoreSettings.DefaultTileSize
+                    ),
+                }
+            );
+
+            return playerCoreEntity;
         }
 
         public static Entity CreateWall(
@@ -71,16 +102,16 @@ namespace NightfallBastion.Utilities
 
             world.ECSManager.AddComponent(
                 wallEntity,
-                new HealthComp { maxHealth = maxHealth, currentHealth = maxHealth }
+                new HealthComp { MaxHealth = maxHealth, CurrentHealth = maxHealth }
             );
-            world.ECSManager.AddComponent(wallEntity, new PositionComp { position = position });
+            world.ECSManager.AddComponent(wallEntity, new PositionComp { Position = position });
             world.ECSManager.AddComponent(
                 wallEntity,
                 new PhysicsComp
                 {
-                    mass = mass,
-                    isSolid = true,
-                    hitbox = new Rectangle(
+                    Mass = mass,
+                    IsSolid = true,
+                    Hitbox = new Rectangle(
                         0,
                         0,
                         world.Game.CoreSettings.DefaultTileSize,
@@ -88,7 +119,7 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
-            world.ECSManager.AddComponent(wallEntity, new BuildingComp { type = type });
+            world.ECSManager.AddComponent(wallEntity, new BuildingComp { Type = type });
 
             return wallEntity;
         }
@@ -102,19 +133,19 @@ namespace NightfallBastion.Utilities
         )
         {
             var enemyEntity = world.ECSManager.CreateEntity();
-            world.ECSManager.AddComponent(enemyEntity, new EnemyComp { type = type });
-            world.ECSManager.AddComponent(enemyEntity, new PositionComp { position = position });
+            world.ECSManager.AddComponent(enemyEntity, new EnemyComp { Type = type });
+            world.ECSManager.AddComponent(enemyEntity, new PositionComp { Position = position });
             world.ECSManager.AddComponent(
                 enemyEntity,
-                new HealthComp { maxHealth = maxHealth, currentHealth = maxHealth }
+                new HealthComp { MaxHealth = maxHealth, CurrentHealth = maxHealth }
             );
             world.ECSManager.AddComponent(
                 enemyEntity,
                 new PhysicsComp
                 {
-                    mass = mass,
-                    isSolid = true,
-                    hitbox = new Rectangle(
+                    Mass = mass,
+                    IsSolid = true,
+                    Hitbox = new Rectangle(
                         0,
                         0,
                         world.Game.CoreSettings.DefaultTileSize / 2,
@@ -126,10 +157,10 @@ namespace NightfallBastion.Utilities
                 enemyEntity,
                 new WeaponComp
                 {
-                    type = WeaponType.Kamikaze,
-                    damage = 10.0f,
-                    range = 1.0f,
-                    cooldown = 0.0f,
+                    Type = WeaponType.Kamikaze,
+                    Damage = 10.0f,
+                    Range = 1.0f,
+                    Cooldown = 0.0f,
                 }
             );
 

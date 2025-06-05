@@ -1,16 +1,17 @@
-namespace NightfallBastion.World
+namespace NightfallBastion.World.Tiles;
+
+public struct TileData
 {
-    public enum Floor
+    public FloorType FloorType;
+    public int BuildingID;
+
+    public float GetTileWalkCost()
     {
-        Space,
-        DefaultFloor,
-        SlowdownFloor,
-        DamageFloor,
+        if (BuildingID > 0)
+            return float.MaxValue;
+
+        return Floors.Stats[FloorType].WalkCost;
     }
 
-    public struct TileData
-    {
-        public Floor floor;
-        public int BuildingID;
-    }
+    public float GetTileSpeedMultiplayer() => 1 / GetTileWalkCost();
 }
