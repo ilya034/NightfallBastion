@@ -12,8 +12,8 @@ public struct TileData
         if (BuildingID == 0)
             return Floors.Stats[FloorType].WalkCost;
 
-        if (gameWorld.ECSManager.GetComponent<BuildingComp>(BuildingID).IsDestroyable)
-            return -1.0f;
+        if (!gameWorld.ECSManager.GetComponent<BuildingComp>(BuildingID).IsDestroyable)
+            return float.PositiveInfinity;
 
         return Floors.Stats[FloorType].WalkCost
             + gameWorld.ECSManager.GetComponent<HealthComp>(BuildingID).CurrentHealth;

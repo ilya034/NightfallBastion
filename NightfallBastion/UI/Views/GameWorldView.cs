@@ -71,7 +71,21 @@ namespace NightfallBastion.UI
                     else
                         distance = tile.Distance.ToString();
 
-                    _game.SpriteBatch.DrawString(_font, distance, position, Color.White);
+                    _game.SpriteBatch.DrawString(
+                        _font,
+                        distance,
+                        position
+                            + new Vector2(
+                                _game.CoreSettings.DefaultTileSize / 2f,
+                                _game.CoreSettings.DefaultTileSize / 2f
+                            ),
+                        Color.DimGray,
+                        0f,
+                        _font.MeasureString(distance) / 2f,
+                        0.75f,
+                        SpriteEffects.None,
+                        0f
+                    );
                 }
             }
         }
@@ -127,8 +141,12 @@ namespace NightfallBastion.UI
                 _game.SpriteBatch.Draw(
                     _enemyTexture,
                     UtilMethods.GetDestinationRect(
-                        entity.Position,
-                        _game.CoreSettings.DefaultTileSize * 2
+                        entity.Position
+                            - new Vector2(
+                                _game.CoreSettings.DefaultTileSize / 2,
+                                _game.CoreSettings.DefaultTileSize / 2
+                            ),
+                        _game.CoreSettings.DefaultTileSize
                     ),
                     _game.CoreSettings.DefaultTextureRectangle,
                     Color.White

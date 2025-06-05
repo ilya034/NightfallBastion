@@ -26,9 +26,6 @@ namespace NightfallBastion.World
                 MovementComp
             >();
 
-            int[] dx = [0, 0, -1, 1];
-            int[] dy = [-1, 1, 0, 0];
-
             foreach (var enemy in enemies)
             {
                 var positionComp = _world.ECSManager.GetComponent<PositionComp>(enemy);
@@ -47,10 +44,12 @@ namespace NightfallBastion.World
                     var bestDistance = distanceMap[tileX, tileY];
                     var bestX = tileX;
                     var bestY = tileY;
-                    for (int i = 0; i < 4; i++)
+
+                    for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
                     {
-                        var newX = tileX + dx[i];
-                        var newY = tileY + dy[i];
+                        var newX = tileX + dx;
+                        var newY = tileY + dy;
 
                         if (
                             newX < 0
@@ -67,31 +66,36 @@ namespace NightfallBastion.World
                             bestX = newX;
                             bestY = newY;
                         }
+                    }
 
-                        if (bestX != tileX || bestY != tileY)
-                        {
-                            movementComp.NextPosition =
-                                new Vector2(bestX, bestY)
-                                * _world.Game.CoreSettings.DefaultTileSize;
-                            movementComp.IsMoving = true;
-                        }
+                    if (bestX != tileX || bestY != tileY)
+                    {
+                        movementComp.NextPosition =
+                            new Vector2(bestX, bestY) * _world.Game.CoreSettings.DefaultTileSize
+                            + new Vector2(1, 1) * _world.Game.CoreSettings.DefaultTileSize / 2;
+                        movementComp.IsMoving = true;
+                        _world.ECSManager.SetComponent(enemy, movementComp);
                     }
                 }
 
-                var target = movementComp.NextPosition;
-                var direction = target - position;
-                if (direction.Length() < 0.01f)
+                var targetVector = movementComp.NextPosition - position;
+                if (targetVector.Length() < 0.1f)
                 {
                     movementComp.IsMoving = false;
+                    _world.ECSManager.SetComponent(enemy, movementComp);
                     continue;
                 }
 
+                var direction = targetVector;
                 direction.Normalize();
-                var delta = -direction * movementComp.Speed * deltaTime;
-                positionComp.Position += delta;
+                var delta = direction * movementComp.Speed * deltaTime;
+
+                if (delta.Length() > targetVector.Length())
+                    positionComp.Position = movementComp.NextPosition;
+                else
+                    positionComp.Position += delta;
 
                 _world.ECSManager.SetComponent(enemy, positionComp);
-                _world.ECSManager.SetComponent(enemy, movementComp);
             }
         }
     }

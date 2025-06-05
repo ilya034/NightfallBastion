@@ -28,7 +28,8 @@ namespace NightfallBastion.Utilities
                         var wallEntity = CreateWall(
                             world,
                             BuildingType.StrongWall,
-                            new Vector2(x, y)
+                            new Vector2(x, y),
+                            false
                         );
 
                         tiles[x, y].BuildingID = wallEntity;
@@ -98,6 +99,7 @@ namespace NightfallBastion.Utilities
             GameWorld world,
             BuildingType type,
             Vector2 position,
+            bool destroyable = true,
             float mass = 1.0f
         )
         {
@@ -133,7 +135,7 @@ namespace NightfallBastion.Utilities
             );
             world.ECSManager.AddComponent(
                 wallEntity,
-                new BuildingComp { Type = type, IsDestroyable = true }
+                new BuildingComp { Type = type, IsDestroyable = destroyable }
             );
 
             return wallEntity;
@@ -152,7 +154,7 @@ namespace NightfallBastion.Utilities
             world.ECSManager.AddComponent(enemyEntity, new PositionComp { Position = position });
             world.ECSManager.AddComponent(
                 enemyEntity,
-                new MovementComp { Speed = 25f, IsMoving = true }
+                new MovementComp { Speed = 50f, IsMoving = false }
             );
             world.ECSManager.AddComponent(
                 enemyEntity,

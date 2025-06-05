@@ -25,7 +25,7 @@ namespace NightfallBastion.World
                 Game.CoreSettings.DefaultMapHeight
             );
 
-            EntitiesFactory.CreateEnemy(this, EnemyType.Boy, new Vector2(64, 64), 100.0f);
+            EntitiesFactory.CreateEnemy(this, EnemyType.Boy, new Vector2(80, 80), 100.0f);
 
             AddSystems();
         }
@@ -116,7 +116,10 @@ namespace NightfallBastion.World
                 .Where(e => ECSManager.GetComponent<TilePositionComp>(e).Position == tilePosition)
                 .FirstOrDefault();
 
-            if (buildingEntity != 0)
+            if (
+                buildingEntity != 0
+                && ECSManager.GetComponent<BuildingComp>(buildingEntity).IsDestroyable
+            )
             {
                 Console.WriteLine($"Destroying wall at {tilePosition}");
                 ECSManager.DestroyEntity(buildingEntity);

@@ -19,8 +19,8 @@ namespace NightfallBastion.World.ECS.Systems
                     _world,
                     EnemyType.Boy,
                     new Vector2(
-                        _world.Game.CoreSettings.DefaultTileSize * 2,
-                        _world.Game.CoreSettings.DefaultTileSize * 2
+                        _world.Game.CoreSettings.DefaultTileSize * 2 + 16,
+                        _world.Game.CoreSettings.DefaultTileSize * 2 + 16
                     ),
                     100f
                 );

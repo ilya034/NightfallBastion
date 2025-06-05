@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -23,6 +24,10 @@ namespace NightfallBastion.UI
             {
                 var movement =
                     cameraInput.MovementDirection * _game.GameplaySettings.DefaultCameraSpeed;
+
+                if (_game.InputHandler.IsKeyDown(Keys.LeftShift))
+                    movement *= 2f;
+                    
                 _game.GameWorld.Camera.Move(movement);
             }
 
