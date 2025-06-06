@@ -14,7 +14,7 @@ namespace NightfallBastion.UI
         private Texture2D? _wallTexture;
         private Texture2D? _strongWallTexture;
 
-        // private Texture2D _coreTexture;
+        private Texture2D _coreTexture;
         private Texture2D? _mineTexture;
         private SpriteFont? _font;
         public RenderData _renderData;
@@ -26,7 +26,7 @@ namespace NightfallBastion.UI
             _strongWallTexture = _game.Content.Load<Texture2D>(
                 _game.CoreSettings.StrongWallAssetName
             );
-            // _coreTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.CoreAssetName);
+            _coreTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.CoreAssetName);
             _mineTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.MineAssetName);
             _enemyTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.EnemyAssetName);
             _font = _game.Content.Load<SpriteFont>("Font");
@@ -100,7 +100,7 @@ namespace NightfallBastion.UI
                 {
                     BuildingType.Wall => _wallTexture,
                     BuildingType.StrongWall => _strongWallTexture,
-                    BuildingType.Core => _strongWallTexture,
+                    BuildingType.Core => _coreTexture,
                     BuildingType.Mine => _mineTexture,
                     _ => _tileTexture,
                 };

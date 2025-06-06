@@ -17,6 +17,7 @@ namespace NightfallBastion.Core
         public string EnemyAssetName { get; } = "Boy";
         public string StrongWallAssetName { get; } = "StrongWall";
         public string WallAssetName { get; } = "Wall";
+        public string CoreAssetName { get; } = "Core";
         public string MineAssetName { get; } = "Mine";
         public string ContentRootDirectoryName { get; } = "Content";
         public int MenuPanelSpacing { get; } = 10;
