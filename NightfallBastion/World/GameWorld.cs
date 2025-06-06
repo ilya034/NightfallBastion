@@ -138,11 +138,11 @@ namespace NightfallBastion.World
                 && position.Y < tileSize * Game.CoreSettings.DefaultMapHeight;
         }
 
-        public Vector2 TileToWorld(Vector2 tilePosition)
-        {
-            var tileSize = Game.CoreSettings.DefaultTileSize;
-            return tilePosition * tileSize;
-        }
+        public Vector2 TileToWorldCentered(Vector2 tilePosition) =>
+            TileToWorld(tilePosition) + new Vector2(0.5f, 0.5f) * Game.CoreSettings.DefaultTileSize;
+
+        public Vector2 TileToWorld(Vector2 tilePosition) =>
+            tilePosition * Game.CoreSettings.DefaultTileSize;
 
         public Vector2 WorldToTile(Vector2 worldPosition)
         {

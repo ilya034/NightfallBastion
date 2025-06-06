@@ -171,8 +171,8 @@ namespace NightfallBastion.Utilities
                     Hitbox = new Rectangle(
                         0,
                         0,
-                        world.Game.CoreSettings.DefaultTileSize / 2,
-                        world.Game.CoreSettings.DefaultTileSize / 2
+                        world.Game.CoreSettings.DefaultTileSize,
+                        world.Game.CoreSettings.DefaultTileSize
                     ),
                 }
             );
@@ -183,7 +183,7 @@ namespace NightfallBastion.Utilities
                 {
                     Damage = 50.0f,
                     DamageRadius = 64f,
-                    SenseRadius = 32f,
+                    SenseRadius = 16f,
                 }
             );
 

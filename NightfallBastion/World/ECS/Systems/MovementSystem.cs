@@ -70,9 +70,9 @@ namespace NightfallBastion.World
 
                     if (bestX != tileX || bestY != tileY)
                     {
-                        movementComp.NextPosition =
-                            new Vector2(bestX, bestY) * _world.Game.CoreSettings.DefaultTileSize
-                            + new Vector2(1, 1) * _world.Game.CoreSettings.DefaultTileSize / 2;
+                        movementComp.NextPosition = _world.TileToWorldCentered(
+                            new Vector2(bestX, bestY)
+                        );
                         movementComp.IsMoving = true;
                         _world.ECSManager.SetComponent(enemy, movementComp);
                     }

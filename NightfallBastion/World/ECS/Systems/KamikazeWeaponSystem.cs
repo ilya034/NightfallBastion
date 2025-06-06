@@ -33,12 +33,12 @@ namespace NightfallBastion.World.ECS.Systems
                         target
                     );
 
+                    var targetPosition = _world.TileToWorldCentered(targetPositionComp.Position);
+
                     if (
                         targetTeamComp.Team != teamComp.Team
-                        && Vector2.Distance(
-                            positionComp.Position,
-                            _world.TileToWorld(targetPositionComp.Position)
-                        ) <= weaponComp.SenseRadius
+                        && Vector2.Distance(positionComp.Position, targetPosition)
+                            <= weaponComp.SenseRadius
                     )
                     {
                         _world.ECSManager.DestroyEntity(attacker);
