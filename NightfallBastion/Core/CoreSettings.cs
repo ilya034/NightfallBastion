@@ -19,7 +19,7 @@ namespace NightfallBastion.Core
         public string WallAssetName { get; } = "Wall";
         public string MineAssetName { get; } = "Mine";
         public string ContentRootDirectoryName { get; } = "Content";
-        public int MainMenuPanelSpacing { get; } = 10;
+        public int MenuPanelSpacing { get; } = 10;
         public int DefaultButtonWidth { get; } = 200;
         public int DefaultButtonHeight { get; } = 35;
     }

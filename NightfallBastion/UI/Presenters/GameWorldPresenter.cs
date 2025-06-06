@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
@@ -18,6 +19,12 @@ namespace NightfallBastion.UI
 
         private void HandleInput()
         {
+            if (_game.InputHandler.IsKeyPressed(Keys.Escape))
+            {
+                _game.SceneManager.ShowScene(Scenes.Pause);
+                return;
+            }
+
             var cameraInput = _game.InputHandler.HandleCameraInput();
 
             if (cameraInput.MovementDirection != Vector2.Zero)

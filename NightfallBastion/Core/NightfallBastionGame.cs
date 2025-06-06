@@ -55,9 +55,6 @@ namespace NightfallBastion.Core
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 Exit();
 
-            if (InputHandler.IsKeyDown(Keys.Escape))
-                SceneManager.HideCurrentScene();
-
             SceneManager.Update(gameTime);
             base.Update(gameTime);
         }

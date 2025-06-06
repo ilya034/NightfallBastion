@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Xna.Framework;
-using Myra;
 using Myra.Graphics2D.UI;
 using NightfallBastion.Core;
 
@@ -9,12 +8,12 @@ namespace NightfallBastion.UI
     public class MainMenuView(NightfallBastionGame game) : View(game)
     {
         public event Action? OnStartButtonClicked;
-        public event Action? OnOptionsButtonClicked;
+        public event Action? OnSettingsButtonClicked;
         public event Action? OnExitButtonClicked;
 
         public override void BuildUI()
         {
-            var mainMenuPanel = new VerticalStackPanel { Spacing = 10 };
+            var mainMenuPanel = new VerticalStackPanel { Spacing = _game.CoreSettings.MenuPanelSpacing };
 
             var titleLabel = new Label
             {
@@ -40,21 +39,21 @@ namespace NightfallBastion.UI
             startButton.Click += (_, __) => OnStartButtonClicked?.Invoke();
             mainMenuPanel.Widgets.Add(startButton);
 
-            var optionsButton = new Button
+            var SettingsButton = new Button
             {
                 Width = _game.CoreSettings.DefaultButtonWidth,
                 Height = _game.CoreSettings.DefaultButtonHeight,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Content = new Label
                 {
-                    Text = "Options",
+                    Text = "Settings",
                     TextColor = Color.White,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 },
             };
-            optionsButton.Click += (_, __) => OnOptionsButtonClicked?.Invoke();
-            mainMenuPanel.Widgets.Add(optionsButton);
+            SettingsButton.Click += (_, __) => OnSettingsButtonClicked?.Invoke();
+            mainMenuPanel.Widgets.Add(SettingsButton);
 
             var exitButton = new Button
             {

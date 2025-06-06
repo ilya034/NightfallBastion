@@ -12,6 +12,7 @@ namespace NightfallBastion.UI
     {
         MainMenu,
         GameWorld,
+        Pause,
         Settings,
     }
 
@@ -42,6 +43,7 @@ namespace NightfallBastion.UI
                 GameWorldPresenter,
                 GameWorldView
             >(Game);
+            _scenes[Scenes.Pause] = Scene.Create<PauseScene, PausePresenter, PauseView>(Game);
             _scenes[Scenes.Settings] = Scene.Create<SettingsScene, SettingsPresenter, SettingsView>(
                 Game
             );
@@ -54,6 +56,11 @@ namespace NightfallBastion.UI
             var scene = _scenes[key];
             if (!_shownScenes.Contains(scene))
                 _shownScenes.Push(scene);
+            else
+            {
+                while (_shownScenes.Peek() != scene)
+                    _shownScenes.Pop();
+            }
         }
 
         public void HideCurrentScene()

@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -9,8 +11,27 @@ namespace NightfallBastion.UI
         public override void RegisterEvents()
         {
             base.RegisterEvents();
+
+            _view.OnResumeButtonClicked += OnResumeButtonClicked;
+            _view.OnSettingsButtonClicked += OnSettingsButtonClicked;
+            _view.OnMenuButtonClicked += OnMenuButtonClicked;
         }
 
-        private void OnBackButtonClicked() => _game.SceneManager.HideCurrentScene();
+        public void OnResumeButtonClicked() => _game.SceneManager.HideCurrentScene();
+
+        public void OnSettingsButtonClicked() => _game.SceneManager.ShowScene(Scenes.Settings);
+
+        public void OnMenuButtonClicked() => _game.SceneManager.ShowScene(Scenes.MainMenu);
+
+        public override void Update(GameTime gameTime)
+        {
+            if (_game.InputHandler.IsKeyPressed(Keys.Escape))
+            {
+                OnMenuButtonClicked();
+                return;
+            }
+
+            base.Update(gameTime);
+        }
     }
 }

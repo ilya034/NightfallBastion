@@ -71,9 +71,9 @@ namespace NightfallBastion.UI
         public bool IsKeyDown(Keys key) => _currentKeyboardState.IsKeyDown(key);
 
         public bool IsKeyPressed(Keys key) =>
-            _previousKeyboardState.IsKeyDown(key) && !_previousKeyboardState.IsKeyDown(key);
+            _currentKeyboardState.IsKeyDown(key) && !_previousKeyboardState.IsKeyDown(key);
 
         public bool IsKeyReleased(Keys key) =>
-            !_previousKeyboardState.IsKeyDown(key) && _previousKeyboardState.IsKeyDown(key);
+            !_currentKeyboardState.IsKeyDown(key) && _previousKeyboardState.IsKeyDown(key);
     }
 }

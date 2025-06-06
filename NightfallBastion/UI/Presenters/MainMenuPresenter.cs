@@ -11,7 +11,7 @@ namespace NightfallBastion.UI
             base.RegisterEvents();
 
             _view.OnStartButtonClicked += OnPlayButtonClicked;
-            _view.OnOptionsButtonClicked += OnOptionsButtonClicked;
+            _view.OnSettingsButtonClicked += OnOptionsButtonClicked;
             _view.OnExitButtonClicked += OnExitButtonClicked;
         }
 
