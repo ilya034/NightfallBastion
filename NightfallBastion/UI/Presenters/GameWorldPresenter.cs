@@ -12,7 +12,7 @@ namespace NightfallBastion.UI
         {
             HandleInput();
             _game.GameWorld.Update(gameTime);
-            _view.UpdateRenderData(_game.GameWorld.GetRenderData());
+            _view.UpdateRenderData(_game.GameWorld.RenderAdapter.GetRenderData());
             base.Update(gameTime);
         }
 
@@ -27,7 +27,7 @@ namespace NightfallBastion.UI
 
                 if (_game.InputHandler.IsKeyDown(Keys.LeftShift))
                     movement *= 2f;
-                    
+
                 _game.GameWorld.Camera.Move(movement);
             }
 
@@ -47,7 +47,7 @@ namespace NightfallBastion.UI
 
             if (_game.InputHandler.IsRightMouseButtonDown())
             {
-                var worldPosition = _game.GameWorld.ScreenToWorld(
+                var worldPosition = _game.GameWorld.Camera.ScreenToWorld(
                     _game.InputHandler.GetMousePosition()
                 );
                 HandleRightClick(worldPosition);

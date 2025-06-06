@@ -21,7 +21,7 @@ namespace NightfallBastion.UI
 
         public override void LoadContent()
         {
-            _tileTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.TilesetAssetName);
+            _tileTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.TileAssetName);
             _wallTexture = _game.Content.Load<Texture2D>(_game.CoreSettings.WallAssetName);
             _strongWallTexture = _game.Content.Load<Texture2D>(
                 _game.CoreSettings.StrongWallAssetName
@@ -45,7 +45,7 @@ namespace NightfallBastion.UI
 
         public void UpdateRenderData(RenderData renderData) => _renderData = renderData;
 
-        public void RenderTileMap()
+        private void RenderTileMap()
         {
             var tileMapData = _renderData.TileMapData;
 
@@ -90,7 +90,7 @@ namespace NightfallBastion.UI
             }
         }
 
-        public void RenderBuildings()
+        private void RenderBuildings()
         {
             var entityData = _renderData.BuildingData;
 
@@ -107,112 +107,50 @@ namespace NightfallBastion.UI
 
                 _game.SpriteBatch.Draw(
                     texture,
-                    UtilMethods.GetDestinationRect(
-                        entity.Position,
-                        _game.CoreSettings.DefaultTileSize
-                    ),
+                    GetDestinationRect(entity.Position),
                     _game.CoreSettings.DefaultTextureRectangle,
                     Color.WhiteSmoke
                 );
 
-                _game.SpriteBatch.DrawString(
-                    _font,
-                    entity.Health.ToString(),
-                    entity.Position
-                        + new Vector2(
-                            _game.CoreSettings.DefaultTileSize / 2f,
-                            _game.CoreSettings.DefaultTileSize / 2f
-                        ),
-                    Color.DarkGray,
-                    0f,
-                    _font.MeasureString(entity.Health.ToString()) / 2f,
-                    0.75f,
-                    SpriteEffects.None,
-                    0f
-                );
+                DrawBuildingHealth(entity.Health, entity.Position);
             }
         }
 
-        public void RenderEnemies()
+        private void RenderEnemies()
         {
             var entityData = _renderData.EnemyData;
 
             foreach (var entity in entityData)
             {
-                Color entityColor = Color.White;
-                if (entity.MaxHealth > 0)
-                {
-                    float healthRatio = entity.Health / entity.MaxHealth;
-                    if (healthRatio > 0.7f)
-                        entityColor = Color.White;
-                    else if (healthRatio > 0.3f)
-                        entityColor = Color.Yellow;
-                    else
-                        entityColor = Color.Red;
-                }
-
                 _game.SpriteBatch.Draw(
                     _enemyTexture,
-                    UtilMethods.GetDestinationRect(
-                        entity.Position
-                            - new Vector2(
-                                _game.CoreSettings.DefaultTileSize / 2,
-                                _game.CoreSettings.DefaultTileSize / 2
-                            ),
-                        _game.CoreSettings.DefaultTileSize
-                    ),
+                    GetDestinationRect(entity.Position),
                     _game.CoreSettings.DefaultTextureRectangle,
                     Color.White
                 );
-
-                // if (_showHealthDisplay && entity.maxHealth > 0)
-                //     DrawEntityHealthBar(entity, entity.position);
             }
         }
 
-        // private void DrawWallHealth(TileViewModel tile, Rectangle position)
-        // {
-        //     if (_font == null || tile.Health < 0 || tile.MaxHealth <= 0)
-        //         return;
+        private void DrawBuildingHealth(float health, Vector2 position)
+        {
+            _game.SpriteBatch.DrawString(
+                _font,
+                health.ToString(),
+                position,
+                Color.DarkGray,
+                0f,
+                _font.MeasureString(health.ToString()) / 2f,
+                0.75f,
+                SpriteEffects.None,
+                0f
+            );
+        }
 
-        //     string healthText = $"{tile.Health}/{tile.MaxHealth}";
-        //     Vector2 textSize = _font.MeasureString(healthText);
-        //     Vector2 textPosition = new(
-        //         position.X + (position.Width - textSize.X) / 2,
-        //         position.Y + (position.Height - textSize.Y) / 2
-        //     );
-
-        //     Color textColor = (float)tile.Health / tile.MaxHealth > 0.3f ? Color.Black : Color.White;
-
-        //     _game.SpriteBatch.DrawString(_font, healthText, textPosition, textColor);
-        // }
-
-        // private void DrawEnemyHealthBar(EnemyViewModel enemy, Vector2 position)
-        // {
-        //     if (enemy.MaxHealth <= 0)
-        //         return;
-
-        //     int barWidth = 30;
-        //     int barHeight = 4;
-        //     Vector2 barPosition = new(position.X, position.Y - 10);
-
-        //     var backgroundRect = new Rectangle(
-        //         (int)barPosition.X,
-        //         (int)barPosition.Y,
-        //         barWidth,
-        //         barHeight
-        //     );
-        //     _game.SpriteBatch.Draw(_tilesetTexture, backgroundRect, Color.DarkRed);
-
-        //     float healthRatio = (float)enemy.Health / enemy.MaxHealth;
-        //     int healthWidth = (int)(barWidth * healthRatio);
-        //     var healthRect = new Rectangle(
-        //         (int)barPosition.X,
-        //         (int)barPosition.Y,
-        //         healthWidth,
-        //         barHeight
-        //     );
-        //     _game.SpriteBatch.Draw(_tilesetTexture, healthRect, Color.Green);
-        // }
+        public Rectangle GetDestinationRect(Vector2 position)
+        {
+            var tileSize = _game.CoreSettings.DefaultTileSize;
+            position -= new Vector2(tileSize / 2f, tileSize / 2f);
+            return new Rectangle((int)position.X, (int)position.Y, tileSize, tileSize);
+        }
     }
 }

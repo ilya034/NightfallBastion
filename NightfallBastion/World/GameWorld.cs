@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
@@ -13,10 +12,12 @@ namespace NightfallBastion.World
     {
         public NightfallBastionGame Game { get; private set; } = game;
         public ECSManager ECSManager { get; private set; } = new();
+        public RenderAdapter RenderAdapter { get; private set; }
         public Camera Camera { get; private set; }
 
         public void LoadContent()
         {
+            RenderAdapter = new RenderAdapter(this);
             CreateCamera();
 
             EntitiesFactory.CreateTileMap(
@@ -60,15 +61,6 @@ namespace NightfallBastion.World
             Camera.ViewportWidth = viewport.Width;
             Camera.ViewportHeight = viewport.Height;
         }
-
-        public Vector2 ScreenToWorld(Vector2 screenPosition) =>
-            Camera.ScreenToWorld(screenPosition);
-
-        public Vector2 WorldToScreen(Vector2 worldPosition) => Camera.WorldToScreen(worldPosition);
-
-        public Matrix GetCameraTransformMatrix() => Camera.GetTransformMatrix();
-
-        public bool IsInCameraView(Vector2 worldPosition) => Camera.IsInView(worldPosition);
 
         public void Update(GameTime gameTime) => ECSManager.Update(gameTime);
 
@@ -151,118 +143,6 @@ namespace NightfallBastion.World
                 (int)(worldPosition.X / tileSize),
                 (int)(worldPosition.Y / tileSize)
             );
-        }
-
-        public RenderData GetRenderData()
-        {
-            var renderData = new RenderData
-            {
-                CameraTransform = GetCameraTransformMatrix(),
-                TileMapData = GetTileMapRenderData(),
-                BuildingData = GetBuildingRenderData(),
-                EnemyData = GetEnemyRenderData(),
-            };
-
-            return renderData;
-        }
-
-        public TileMapRenderData GetTileMapRenderData()
-        {
-            var tileMapEntity = ECSManager
-                .GetEntitiesWithComponents<TileMapComp>()
-                .FirstOrDefault();
-
-            if (tileMapEntity == null)
-                throw new InvalidOperationException("TileMapComp not found in ECSManager.");
-
-            var tileMapComp = ECSManager.GetComponent<TileMapComp>(tileMapEntity);
-            var distanceMapComp = ECSManager.GetComponent<DistanceMapComp>(tileMapEntity);
-
-            var tiles = new TileRenderData[tileMapComp.Width, tileMapComp.Height];
-
-            for (int x = 0; x < tileMapComp.Width; x++)
-            {
-                for (int y = 0; y < tileMapComp.Height; y++)
-                {
-                    var tileData = tileMapComp.TileMap[x, y];
-
-                    var floorTile = new TileRenderData
-                    {
-                        FloorType = tileData.FloorType,
-                        Distance = distanceMapComp.Distances[x, y],
-                    };
-                    tiles[x, y] = floorTile;
-                }
-            }
-
-            return new TileMapRenderData
-            {
-                Tiles = tiles,
-                Width = tileMapComp.Width,
-                Height = tileMapComp.Height,
-            };
-        }
-
-        public BuildingRenderData[] GetBuildingRenderData()
-        {
-            var buildingsRenderData = new List<BuildingRenderData>();
-
-            var buildingEntities = ECSManager.GetEntitiesWithComponents<BuildingComp, HealthComp>();
-
-            foreach (var buildingEntity in buildingEntities)
-            {
-                var healthComp = ECSManager.GetComponent<HealthComp>(buildingEntity);
-                var buildingComp = ECSManager.GetComponent<BuildingComp>(buildingEntity);
-
-                Vector2 position;
-                if (ECSManager.TryGetComponent<PositionComp>(buildingEntity, out var positionComp))
-                    position = positionComp.Position;
-                else
-                    position = TileToWorld(
-                        ECSManager.GetComponent<TilePositionComp>(buildingEntity).Position
-                    );
-
-                var renderEntity = new BuildingRenderData
-                {
-                    Type = buildingComp.Type,
-                    Position = position,
-                    Health = healthComp.CurrentHealth,
-                    MaxHealth = healthComp.MaxHealth,
-                };
-
-                buildingsRenderData.Add(renderEntity);
-            }
-
-            return buildingsRenderData.ToArray();
-        }
-
-        public EnemyRenderData[] GetEnemyRenderData()
-        {
-            var entitiesRenderData = new List<EnemyRenderData>();
-
-            var enemyEntities = ECSManager.GetEntitiesWithComponents<
-                EnemyComp,
-                PositionComp,
-                HealthComp
-            >();
-
-            foreach (var enemyEntity in enemyEntities)
-            {
-                var positionComp = ECSManager.GetComponent<PositionComp>(enemyEntity);
-                var healthComp = ECSManager.GetComponent<HealthComp>(enemyEntity);
-                var enemyComp = ECSManager.GetComponent<EnemyComp>(enemyEntity);
-
-                var renderEntity = new EnemyRenderData
-                {
-                    Type = enemyComp.Type,
-                    Position = positionComp.Position,
-                    Health = healthComp.CurrentHealth,
-                    MaxHealth = healthComp.MaxHealth,
-                };
-                entitiesRenderData.Add(renderEntity);
-            }
-
-            return entitiesRenderData.ToArray();
         }
     }
 }

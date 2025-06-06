@@ -5,12 +5,6 @@ using NightfallBastion.World.Tiles;
 
 namespace NightfallBastion.Utilities
 {
-    public static class UtilMethods
-    {
-        public static Rectangle GetDestinationRect(Vector2 position, int tileSize) =>
-            new Rectangle((int)position.X, (int)position.Y, tileSize, tileSize);
-    }
-
     public static class EntitiesFactory
     {
         public static int CreateTileMap(GameWorld world, int width, int height)

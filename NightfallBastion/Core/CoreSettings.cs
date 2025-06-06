@@ -13,7 +13,7 @@ namespace NightfallBastion.Core
         public int DefaultScreenWidth { get; } = 1280;
         public int DefaultScreenHeight { get; } = 720;
         public string GameTitle { get; } = "Nightfall Bastion";
-        public string TilesetAssetName { get; } = "DefaultFloor";
+        public string TileAssetName { get; } = "DefaultFloor";
         public string EnemyAssetName { get; } = "Boy";
         public string StrongWallAssetName { get; } = "StrongWall";
         public string WallAssetName { get; } = "Wall";
