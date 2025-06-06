@@ -11,7 +11,6 @@ namespace NightfallBastion.UI
         public override void RegisterEvents()
         {
             base.RegisterEvents();
-
             _view.OnResumeButtonClicked += OnResumeButtonClicked;
             _view.OnSettingsButtonClicked += OnSettingsButtonClicked;
             _view.OnMenuButtonClicked += OnMenuButtonClicked;

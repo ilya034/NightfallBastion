@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using NightfallBastion.Core;
 
@@ -12,5 +13,14 @@ namespace NightfallBastion.UI
         public virtual void Update(GameTime gameTime) { }
 
         public virtual void Dispose() { }
+
+        protected void RegisterButtonEvent<TView>(TView view, string eventName, Action handler)
+        {
+            var eventInfo = typeof(TView).GetEvent(eventName);
+            if (eventInfo != null)
+            {
+                eventInfo.AddEventHandler(view, handler);
+            }
+        }
     }
 }

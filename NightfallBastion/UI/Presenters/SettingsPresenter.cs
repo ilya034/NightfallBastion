@@ -1,3 +1,4 @@
+using System;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -9,6 +10,11 @@ namespace NightfallBastion.UI
         public override void RegisterEvents()
         {
             base.RegisterEvents();
+            RegisterButtonEvent(
+                _view,
+                nameof(_view.OnBackButtonClicked),
+                (Action)OnBackButtonClicked
+            );
         }
 
         private void OnBackButtonClicked() => _game.SceneManager.HideCurrentScene();

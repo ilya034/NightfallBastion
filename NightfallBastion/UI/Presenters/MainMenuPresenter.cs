@@ -1,3 +1,4 @@
+using System;
 using NightfallBastion.Core;
 
 namespace NightfallBastion.UI
@@ -9,10 +10,21 @@ namespace NightfallBastion.UI
         public override void RegisterEvents()
         {
             base.RegisterEvents();
-
-            _view.OnStartButtonClicked += OnPlayButtonClicked;
-            _view.OnSettingsButtonClicked += OnOptionsButtonClicked;
-            _view.OnExitButtonClicked += OnExitButtonClicked;
+            RegisterButtonEvent(
+                _view,
+                nameof(_view.OnStartButtonClicked),
+                (Action)OnPlayButtonClicked
+            );
+            RegisterButtonEvent(
+                _view,
+                nameof(_view.OnSettingsButtonClicked),
+                (Action)OnOptionsButtonClicked
+            );
+            RegisterButtonEvent(
+                _view,
+                nameof(_view.OnExitButtonClicked),
+                (Action)OnExitButtonClicked
+            );
         }
 
         public void OnPlayButtonClicked() => _game.SceneManager.ShowScene(Scenes.GameWorld);
