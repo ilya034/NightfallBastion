@@ -70,6 +70,7 @@ namespace NightfallBastion.World.ECS.Components
     public struct DamageComp : IComponent
     {
         public float Damage;
+        public float Range;
         public float Piercing;
     }
 

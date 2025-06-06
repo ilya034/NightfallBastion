@@ -70,7 +70,7 @@ namespace NightfallBastion.Utilities
             world.ECSManager.AddComponent(coreEntity, new TilePositionComp { Position = position });
             world.ECSManager.AddComponent(
                 coreEntity,
-                new HealthComp { MaxHealth = 100.0f, CurrentHealth = 100.0f }
+                new HealthComp { MaxHealth = 500.0f, CurrentHealth = 500.0f }
             );
             world.ECSManager.AddComponent(
                 coreEntity,
@@ -86,6 +86,7 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
+            world.ECSManager.AddComponent(coreEntity, new TeamComp { Team = Team.Player });
             world.ECSManager.AddComponent(
                 coreEntity,
                 new BuildingComp { Type = BuildingType.Core, IsDestroyable = true }
@@ -133,6 +134,7 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
+            world.ECSManager.AddComponent(wallEntity, new TeamComp { Team = Team.Player });
             world.ECSManager.AddComponent(
                 wallEntity,
                 new BuildingComp { Type = type, IsDestroyable = destroyable }
@@ -174,18 +176,42 @@ namespace NightfallBastion.Utilities
                     ),
                 }
             );
+            world.ECSManager.AddComponent(enemyEntity, new TeamComp { Team = Team.Enemy });
             world.ECSManager.AddComponent(
                 enemyEntity,
                 new WeaponComp
                 {
                     Type = WeaponType.Kamikaze,
-                    Damage = 10.0f,
-                    Range = 1.0f,
+                    Damage = 50.0f,
+                    Range = 10.0f,
                     Cooldown = 0.0f,
                 }
             );
 
             return enemyEntity;
+        }
+
+        public static int CreateDamage(
+            GameWorld world,
+            Vector2 position,
+            float damage,
+            float range,
+            float piercing
+        )
+        {
+            var damageEntity = world.ECSManager.CreateEntity();
+            world.ECSManager.AddComponent(damageEntity, new PositionComp { Position = position });
+            world.ECSManager.AddComponent(
+                damageEntity,
+                new DamageComp
+                {
+                    Damage = damage,
+                    Range = range,
+                    Piercing = piercing,
+                }
+            );
+
+            return damageEntity;
         }
     }
 }

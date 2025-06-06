@@ -115,8 +115,21 @@ namespace NightfallBastion.UI
                     Color.WhiteSmoke
                 );
 
-                // if (_showHealthDisplay && building.MaxHealth > 0)
-                //     DrawEntityHealthBar(building, destinationRect);
+                _game.SpriteBatch.DrawString(
+                    _font,
+                    entity.Health.ToString(),
+                    entity.Position
+                        + new Vector2(
+                            _game.CoreSettings.DefaultTileSize / 2f,
+                            _game.CoreSettings.DefaultTileSize / 2f
+                        ),
+                    Color.DarkGray,
+                    0f,
+                    _font.MeasureString(entity.Health.ToString()) / 2f,
+                    0.75f,
+                    SpriteEffects.None,
+                    0f
+                );
             }
         }
 

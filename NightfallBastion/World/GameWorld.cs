@@ -34,8 +34,10 @@ namespace NightfallBastion.World
         {
             ECSManager.AddSystem(new DistanceMapSystem(this));
             ECSManager.AddSystem(new MovementSystem(this));
+            ECSManager.AddSystem(new HealthSystem(this));
             ECSManager.AddSystem(new PhysicsSystem(this));
             ECSManager.AddSystem(new WeaponSystem(this));
+            ECSManager.AddSystem(new DamageSystem(this));
             ECSManager.AddSystem(new EnemySpawnSystem(this));
         }
 
@@ -139,7 +141,7 @@ namespace NightfallBastion.World
         public Vector2 TileToWorld(Vector2 tilePosition)
         {
             var tileSize = Game.CoreSettings.DefaultTileSize;
-            return new Vector2(tilePosition.X * tileSize, tilePosition.Y * tileSize);
+            return tilePosition * tileSize;
         }
 
         public Vector2 WorldToTile(Vector2 worldPosition)
@@ -216,9 +218,9 @@ namespace NightfallBastion.World
                 if (ECSManager.TryGetComponent<PositionComp>(buildingEntity, out var positionComp))
                     position = positionComp.Position;
                 else
-                    position =
+                    position = TileToWorld(
                         ECSManager.GetComponent<TilePositionComp>(buildingEntity).Position
-                        * Game.CoreSettings.DefaultTileSize;
+                    );
 
                 var renderEntity = new BuildingRenderData
                 {
