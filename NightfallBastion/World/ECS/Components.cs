@@ -46,12 +46,13 @@ namespace NightfallBastion.World.ECS.Components
         public Rectangle Hitbox;
     }
 
-    public struct WeaponComp : IComponent
+    public interface IWeaponComp : IComponent { }
+
+    public struct KamikazeWeaponComp : IWeaponComp
     {
-        public WeaponType Type;
         public float Damage;
-        public float Range;
-        public float Cooldown;
+        public float DamageRadius;
+        public float SenseRadius;
     }
 
     public struct EnemyComp : IComponent
@@ -70,8 +71,6 @@ namespace NightfallBastion.World.ECS.Components
     public struct DamageComp : IComponent
     {
         public float Damage;
-        public float Range;
-        public float Piercing;
     }
 
     public struct TileMapComp : IComponent

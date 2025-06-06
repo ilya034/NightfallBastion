@@ -179,39 +179,15 @@ namespace NightfallBastion.Utilities
             world.ECSManager.AddComponent(enemyEntity, new TeamComp { Team = Team.Enemy });
             world.ECSManager.AddComponent(
                 enemyEntity,
-                new WeaponComp
+                new KamikazeWeaponComp
                 {
-                    Type = WeaponType.Kamikaze,
                     Damage = 50.0f,
-                    Range = 10.0f,
-                    Cooldown = 0.0f,
+                    DamageRadius = 64f,
+                    SenseRadius = 32f,
                 }
             );
 
             return enemyEntity;
-        }
-
-        public static int CreateDamage(
-            GameWorld world,
-            Vector2 position,
-            float damage,
-            float range,
-            float piercing
-        )
-        {
-            var damageEntity = world.ECSManager.CreateEntity();
-            world.ECSManager.AddComponent(damageEntity, new PositionComp { Position = position });
-            world.ECSManager.AddComponent(
-                damageEntity,
-                new DamageComp
-                {
-                    Damage = damage,
-                    Range = range,
-                    Piercing = piercing,
-                }
-            );
-
-            return damageEntity;
         }
     }
 }
